@@ -12,7 +12,7 @@ const tsProject = ts.createProject("tsconfig.json");
 gulp.task("start", () => gulp.src("dist", { allowEmpty: true }).pipe(clean()));
 
 // Copy Images task
-gulp.task("copy-images", () => gulp.src("src/images/*/*").pipe(gulp.dest("dist/images")));
+gulp.task("copy-images", () => gulp.src("src/images/*").pipe(gulp.dest("dist/images")));
 
 // HTML task
 gulp.task("html", () => gulp.src("src/*.html").pipe(gulp.dest("dist")));
