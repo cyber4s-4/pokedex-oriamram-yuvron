@@ -17,15 +17,17 @@ body {
 
 .container {
 	@include flex(column, flex-start, center);
-	background-color: rgba(255, 255, 255, 0.9);
+	background-color: rgba(255, 255, 255, 0.95);
 	width: 90%;
 	max-width: 1400px;
 	margin: 0 auto;
 	z-index: 1;
 }
 
+// =================================================================
 // Header
 // =================================================================
+
 header {
 	@include flex(row, space-between, center);
 	background-color: black;
@@ -46,6 +48,9 @@ header {
 		}
 	}
 }
+
+// =================================================================
+// Cards
 // =================================================================
 
 .cards-container {
@@ -55,17 +60,29 @@ header {
 }
 
 .card {
+	cursor: pointer;
 	width: 200px;
 	font-size: 1.5rem;
 	padding: 1em;
 	margin: 1em;
 	background-color: rgb(235, 235, 235);
 	border-radius: 0.6rem;
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 11px 4px;
+	transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
 	img {
 		width: 100%;
 	}
-	.pokemon-title {
-		@include flex(row, center, center);
+	&:hover {
+		background-color: lighten(rgb(235, 235, 235), 10%);
+		transform: scale(1.04);
+		box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 11px 4px;
+	}
+}
+
+.pokemon-title {
+	@include flex(row, center, center);
+	.name {
+		text-transform: capitalize;
 	}
 	.id {
 		font-size: 1.3rem;
@@ -76,3 +93,5 @@ header {
 		}
 	}
 }
+
+// =================================================================

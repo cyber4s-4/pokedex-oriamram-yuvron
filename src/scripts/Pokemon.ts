@@ -12,18 +12,21 @@ export interface PokemonSpecs {
 }
 
 export class Pokemon {
-	constructor(public data: PokemonData) {}
+	data: PokemonData;
 
-	render(perent: HTMLElement) {
+	constructor(data: PokemonData) {
+		this.data = data;
+	}
+
+	render(parent: HTMLElement): void {
 		const card = `
-        <div class="card">
-        <img src=${this.data.img} />
-        <div class="pokemon-title">
-            <span class="name">${this.data.name}</span>
-            <span class="id">${this.data.id}</span>
-        </div>
-    </div>
-        `;
-		perent.innerHTML += card;
+		<div class="card">
+        	<img src=${this.data.img} />
+        	<div class="pokemon-title">
+            	<span class="name">${this.data.name}</span>
+        	 	<span class="id">${this.data.id}</span>
+       		</div>
+    	</div>`;
+		parent.innerHTML += card;
 	}
 }

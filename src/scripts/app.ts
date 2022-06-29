@@ -1,29 +1,32 @@
 import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
-const ALL_POKEMONS_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=151";
-const GET_POKEMON_URL: string = "https://pokeapi.co/api/v2/pokemon/";
-const POKEMON_IMG_URL: string = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
-// const evolutions: string = "https://pokeapi.co/api/v2/evolution-chain/";
+
+const ALL_POKEMONS_URL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=151";
+const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
+const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
+// const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
 // const CHAIN_EVOLUTIONS_NUMBER = 78;
 
-let pokemons: Pokemon[] = [];
-renderAllPokemons(document.body);
-async function renderAllPokemons(container) {
+const pokemons: Pokemon[] = [];
+
+renderAllPokemons(document.getElementById("cards-container"));
+
+async function renderAllPokemons(container): Promise<void> {
 	await createPokemons();
 	pokemons.forEach((pokemon) => pokemon.render(container));
 }
 
-async function getFetch(url: string) {
+async function getFetch(url: string): Promise<{ results }> {
 	return await fetch(url).then((res) => res.json());
 }
-async function createPokemons() {
+
+async function createPokemons(): Promise<void> {
 	const pokemonNames = await getFetch(ALL_POKEMONS_URL).then((res) => res.results);
-	let promises = [];
+	const promises = [];
 	for (let i = 0; i < pokemonNames.length; i++) {
 		promises.push(getFetch(GET_POKEMON_URL + (i + 1)));
 	}
 	for (let i = 0; i < promises.length; i++) {
 		const pokemonObject = await promises[i];
-
 		const pokemonSpecs: PokemonSpecs = {
 			type: pokemonObject.types.map((type) => type.type.name),
 			height: pokemonObject.height / 10,
@@ -32,22 +35,19 @@ async function createPokemons() {
 		const pokemonData: PokemonData = {
 			name: pokemonObject.species.name,
 			id: pokemonObject.id,
-			img: POKEMON_IMG_URL + formatNumber(i + 1) + ".png",
+			img: `${POKEMON_IMG_URL + formatNumber(i + 1)}.png`,
 			specs: pokemonSpecs,
 		};
 		pokemons.push(new Pokemon(pokemonData));
 	}
 }
 
-function formatNumber(i) {
-	if (i / 10 < 1) {
-		return "0".repeat(2) + i;
-	} else if (i / 100 < 1) {
-		return "0".repeat(1) + i;
-	} else if (i / 1000 < 1) {
-		return i;
-	}
+function formatNumber(i: number): string {
+	if (i / 10 < 1) return "0".repeat(2) + i;
+	else if (i / 100 < 1) return "0".repeat(1) + i;
+	else if (i / 1000 < 1) return `${i}`;
 }
+
 // }
 
 // let pokemonObjects: Object[] = [];
