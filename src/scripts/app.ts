@@ -27,31 +27,33 @@ fTypes2.addEventListener("change", () => {
 	filterByType.type2 = fTypes2.value;
 	filterByTypes(filterByType);
 });
-let filterByType = {
-	type1: "none",
-	type2: "none",
+const filterByType = {
+	type1: "",
+	type2: "",
 };
 let pokemons: Pokemon[] = [];
 
 loadPage();
 
-function filterByTypes(types) {
+function filterByTypes(types): void {
 	pokemons.forEach((pokemon) => {
 		pokemon.hide();
-		let type1 = pokemon.data.specs.types[0];
-		let type2 = pokemon.data.specs.types[1];
-		if (!samePokemonBtn.classList.contains("same")) {
-			if (types.type1 === "none")
-				if (types.type2 === type1 || types.type2 === type2) pokemon.show();
-				else if (types.type2 === "none") if (types.type1 === type1 || types.type1 === type2) pokemon.show();
-			if (types.type1 === "none" && types.type2 === "none") pokemon.show();
-			else {
-				if (type1 === types.type1 || type1 === types.type2) pokemon.show();
-				if (type2 !== undefined && (type2 === types.type1 || type2 === types.type2)) pokemon.show();
-			}
+		if (samePokemonBtn.classList.contains("same")) {
+			if (types.type1 && types.type2) {
+				if (pokemon.data.specs.types.includes(types.type1) && pokemon.data.specs.types.includes(types.type2)) pokemon.show();
+			} else if (types.type1) {
+				if (pokemon.data.specs.types.includes(types.type1)) pokemon.show();
+			} else if (types.type2) {
+				if (pokemon.data.specs.types.includes(types.type2)) pokemon.show();
+			} else pokemon.show();
 		} else {
-			if (types.type1 === "none" && types.type2 === "none") pokemon.show();
-			else if (type1 === types.type1 && type2 === types.type2) pokemon.show();
+			if (types.type1) {
+				if (pokemon.data.specs.types.includes(types.type1)) pokemon.show();
+			}
+			if (types.type2) {
+				if (pokemon.data.specs.types.includes(types.type2)) pokemon.show();
+			}
+			if (!types.type1 && !types.type2) pokemon.show();
 		}
 	});
 }
@@ -72,6 +74,7 @@ sort.addEventListener("change", () => {
 	sortBy(sortRequest[0], sortRequest[1]);
 	removeAllPokemons();
 	renderAllPokemons(cardsContainer);
+	filterByTypes(filterByType);
 });
 
 searchButton.addEventListener("click", searchPokemons);
