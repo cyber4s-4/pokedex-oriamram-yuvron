@@ -35,19 +35,23 @@ header {
 	text-align: center;
 	padding: 1em 3em;
 	h1 {
+		margin-right: 0.4em;
 		font-size: 6rem;
 		color: white;
 		cursor: pointer;
 	}
 	.search-container {
+		@include flex(row, space-between, center);
 		background-color: lightgray;
 		font-size: 1.4rem;
 		border-radius: 0.3em;
 		overflow: hidden;
-
+		// width: 100%;
+		// max-width: 400px;
 		#search-box {
 			background-color: transparent;
 			border: 0;
+			width: 100%;
 		}
 		#search-button {
 			border: 0;
@@ -62,7 +66,7 @@ header {
 }
 
 // =================================================================
-// Cards
+// Filter, Sort, Loader and Not Found
 // =================================================================
 
 .filter {
@@ -150,6 +154,10 @@ header {
 	}
 }
 
+// =================================================================
+// Cards
+// =================================================================
+
 .cards-container {
 	@include flex(row, center, center);
 	flex-wrap: wrap;
@@ -165,9 +173,9 @@ header {
 	background-color: rgb(235, 235, 235);
 	border-radius: 0.6rem;
 	box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 11px 4px;
-	transition: 0.3s;
+	transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
 	img {
-		width: 150px;
+		width: 100%;
 	}
 	&:hover {
 		background-color: lighten(rgb(235, 235, 235), 10%);
@@ -196,7 +204,6 @@ header {
 	@include flex(row, space-evenly, center);
 	flex-wrap: wrap;
 	font-size: 1rem;
-
 	span {
 		text-transform: capitalize;
 		color: white;
@@ -206,10 +213,89 @@ header {
 }
 
 // =================================================================
+// Media Query
+
+@media only screen and (max-width: 900px) {
+	header {
+		h1 {
+			font-size: 5rem;
+		}
+	}
+	.card {
+		font-size: 1.2rem;
+		width: 170px;
+		padding: 0.8em;
+		margin: 0.8em;
+	}
+	.pokemon-title .id {
+		font-size: 1rem;
+	}
+	.types {
+		font-size: 0.8rem;
+	}
+}
+
+@media only screen and (max-width: 740px) {
+	header {
+		padding: 1em;
+		h1 {
+			font-size: 3rem;
+		}
+		.search-container {
+			font-size: 1rem;
+		}
+	}
+	.card {
+		font-size: 0.9rem;
+		width: 125px;
+	}
+	.pokemon-title .id {
+		font-size: 0.7rem;
+	}
+	.types {
+		font-size: 0.65rem;
+	}
+}
+
+@media only screen and (max-width: 540px) {
+	.container {
+		width: 100%;
+		background-color: rgba(255, 255, 255, 0.6);
+	}
+	.cards-container {
+		padding: 1em 0.5em;
+	}
+}
+
+@media only screen and (max-width: 460px) {
+	header {
+		padding: 0.6em;
+		h1 {
+			font-size: 1.9rem;
+		}
+		.search-container {
+			font-size: 0.9rem;
+		}
+	}
+	.card {
+		font-size: 0.7rem;
+		width: 90px;
+		padding: 0.6em;
+		margin: 0.6em;
+	}
+	.pokemon-title .id {
+		font-size: 0.5rem;
+	}
+	.types {
+		font-size: 0.45rem;
+	}
+}
+
+// =================================================================
 // Scrollbar
 
 ::-webkit-scrollbar {
-	width: 15px;
+	width: 17px;
 	display: block;
 }
 ::-webkit-scrollbar-track {

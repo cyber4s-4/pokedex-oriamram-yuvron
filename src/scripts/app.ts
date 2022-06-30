@@ -11,7 +11,6 @@ const cardsContainer = document.getElementById("cards-container");
 const loader = document.getElementById("loader");
 const notFound = document.getElementById("not-found");
 const sort = document.getElementById("sort") as HTMLInputElement;
-const sortBtn = document.getElementById("sortBtn");
 let pokemons: Pokemon[] = [];
 
 loadPage();
