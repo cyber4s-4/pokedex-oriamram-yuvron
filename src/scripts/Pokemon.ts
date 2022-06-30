@@ -22,6 +22,7 @@ export class Pokemon {
 	render(parent: HTMLElement): void {
 		this.element = document.createElement("div");
 		this.element.classList.add("card");
+		this.element.addEventListener("click", () => (window.location.href = `/pokemon?id=${this.data.id}`));
 		this.element.innerHTML = `
         <img src=${this.data.img} />
         <div class="pokemon-title">
@@ -29,7 +30,6 @@ export class Pokemon {
         	<span class="id">${this.data.id}</span>
        	</div>`;
 		let types = "<div class='types'>";
-
 		for (const type of this.data.specs.types) {
 			types += `<span class="${type}">${type}</span>`;
 		}
@@ -37,9 +37,11 @@ export class Pokemon {
 		this.element.innerHTML += types;
 		parent.appendChild(this.element);
 	}
-	unrender() {
+
+	unrender(): void {
 		this.element.remove();
 	}
+
 	show(): void {
 		this.element.style.display = "block";
 	}

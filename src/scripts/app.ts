@@ -1,58 +1,56 @@
 import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
 
-const ALL_POKEMONS_URL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=151";
 const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
 const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
+const POKEMONS_AMOUNT = 151;
 // const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
 // const CHAIN_EVOLUTIONS_NUMBER = 78;
+const searchBox = document.getElementById("search-box") as HTMLInputElement;
 const searchButton = document.getElementById("search-button");
 const cardsContainer = document.getElementById("cards-container");
 const loader = document.getElementById("loader");
 const notFound = document.getElementById("not-found");
 const sort = document.getElementById("sort") as HTMLInputElement;
 const sortBtn = document.getElementById("sortBtn");
-const pokemons: Pokemon[] = [];
+let pokemons: Pokemon[] = [];
 
-renderAllPokemons(cardsContainer, pokemons);
-sortBtn.addEventListener("click", () => {
-	sortBy(sort.value);
-	addToLocalStorage(pokemons);
-	removeAllPokemons(pokemons);
-	renderAllPokemons(cardsContainer, pokemons);
-});
-searchButton.addEventListener("click", searchPokemons);
+loadPage();
 
-function sortBy(sortBy) {
-	switch (sortBy) {
-		case "lowHigh":
-			pokemons.sort((a, b) => {
-				if (a.data.id < b.data.id) return -1;
-				else if (a.data.id > b.data.id) return 1;
-				else return 0;
-			});
-			break;
-		case "highLow":
-			pokemons.sort((a, b) => {
-				if (a.data.id < b.data.id) return 1;
-				else if (a.data.id > b.data.id) return -1;
-				else return 0;
-			});
-			break;
-	}
-}
-// Calls the render function on all the pokemons
-async function renderAllPokemons(container, pokemons): Promise<void> {
+async function loadPage(): Promise<void> {
 	loader.classList.add("active");
 	if (!localStorage.getItem("pokemons")) {
-		localStorage.clear();
-		await createPokemons(pokemons);
-		addToLocalStorage(pokemons);
+		await createPokemons();
+		addToLocalStorage();
 	}
-	addToLocalData(pokemons);
+	getFromLocalStorage();
 	loader.classList.remove("active");
+	renderAllPokemons(cardsContainer);
+}
+
+sort.addEventListener("change", () => {
+	const sortRequest = sort.value.split("-") as ["id" | "name", "ascending" | "descending"];
+	sortBy(sortRequest[0], sortRequest[1]);
+	removeAllPokemons();
+	renderAllPokemons(cardsContainer);
+});
+
+searchButton.addEventListener("click", searchPokemons);
+
+document.addEventListener("keydown", (e) => {
+	if (e.code === "Enter" && document.activeElement === searchBox) searchPokemons();
+});
+
+function sortBy(sortType: "id" | "name", direction: "ascending" | "descending"): void {
+	const directionNumber = direction === "ascending" ? 1 : -1;
+	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
+}
+
+// Calls the render function on all the pokemons
+async function renderAllPokemons(container): Promise<void> {
 	pokemons.forEach((pokemon) => pokemon.render(container));
 }
-function removeAllPokemons(pokemons) {
+
+function removeAllPokemons(): void {
 	pokemons.forEach((pokemon) => pokemon.unrender());
 }
 // Getting json from fetch
@@ -61,10 +59,9 @@ async function getFetch(url: string): Promise<{ results }> {
 }
 
 // Creates pokemons and push them to the arr
-async function createPokemons(pokemons): Promise<void> {
-	const pokemonNames = await getFetch(ALL_POKEMONS_URL).then((res) => res.results);
+async function createPokemons(): Promise<void> {
 	const promises = [];
-	for (let i = 0; i < pokemonNames.length; i++) {
+	for (let i = 0; i < POKEMONS_AMOUNT; i++) {
 		promises.push(getFetch(GET_POKEMON_URL + (i + 1)));
 	}
 	for (let i = 0; i < promises.length; i++) {
@@ -92,21 +89,14 @@ function formatNumber(i: number): string {
 }
 
 // Adds to local storage
-function addToLocalStorage(pokemons): void {
-	localStorage.setItem("pokemons", "");
-	localStorage.setItem("pokemons", JSON.stringify(pokemons));
+function addToLocalStorage(): void {
+	localStorage.setItem("pokemons", JSON.stringify(pokemons.map((pokemon) => pokemon.data)));
 }
 
 // Getting pokemons from local storage and pushing them to the local data
-function addToLocalData(pokemons): void {
-	const LENGTH = pokemons.length;
-	for (let i = 0; i < LENGTH; i++) {
-		pokemons.pop();
-	}
+function getFromLocalStorage(): void {
 	const storagedData = JSON.parse(localStorage.getItem("pokemons"));
-	storagedData.forEach((pokemonObject) => {
-		pokemons.push(new Pokemon(pokemonObject.data));
-	});
+	pokemons = storagedData.map((pokemonData) => new Pokemon(pokemonData));
 }
 
 function hideAllPokemons(): void {
@@ -114,7 +104,6 @@ function hideAllPokemons(): void {
 }
 
 function searchPokemons(): void {
-	const searchBox = document.getElementById("search-box") as HTMLInputElement;
 	const searchTerm = searchBox.value.toLowerCase();
 	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm));
 	hideAllPokemons();
