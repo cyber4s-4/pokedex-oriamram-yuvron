@@ -9,13 +9,37 @@ const searchButton = document.getElementById("search-button");
 const cardsContainer = document.getElementById("cards-container");
 const loader = document.getElementById("loader");
 const notFound = document.getElementById("not-found");
-
+const sort = document.getElementById("sort") as HTMLInputElement;
+const sortBtn = document.getElementById("sortBtn");
 const pokemons: Pokemon[] = [];
 
 renderAllPokemons(cardsContainer, pokemons);
-
+sortBtn.addEventListener("click", () => {
+	sortBy(sort.value);
+	addToLocalStorage(pokemons);
+	removeAllPokemons(pokemons);
+	renderAllPokemons(cardsContainer, pokemons);
+});
 searchButton.addEventListener("click", searchPokemons);
 
+function sortBy(sortBy) {
+	switch (sortBy) {
+		case "lowHigh":
+			pokemons.sort((a, b) => {
+				if (a.data.id < b.data.id) return -1;
+				else if (a.data.id > b.data.id) return 1;
+				else return 0;
+			});
+			break;
+		case "highLow":
+			pokemons.sort((a, b) => {
+				if (a.data.id < b.data.id) return 1;
+				else if (a.data.id > b.data.id) return -1;
+				else return 0;
+			});
+			break;
+	}
+}
 // Calls the render function on all the pokemons
 async function renderAllPokemons(container, pokemons): Promise<void> {
 	loader.classList.add("active");
@@ -28,7 +52,9 @@ async function renderAllPokemons(container, pokemons): Promise<void> {
 	loader.classList.remove("active");
 	pokemons.forEach((pokemon) => pokemon.render(container));
 }
-
+function removeAllPokemons(pokemons) {
+	pokemons.forEach((pokemon) => pokemon.unrender());
+}
 // Getting json from fetch
 async function getFetch(url: string): Promise<{ results }> {
 	return await fetch(url).then((res) => res.json());
@@ -67,12 +93,16 @@ function formatNumber(i: number): string {
 
 // Adds to local storage
 function addToLocalStorage(pokemons): void {
+	localStorage.setItem("pokemons", "");
 	localStorage.setItem("pokemons", JSON.stringify(pokemons));
 }
 
 // Getting pokemons from local storage and pushing them to the local data
 function addToLocalData(pokemons): void {
-	pokemons.map((pokemon) => undefined);
+	const LENGTH = pokemons.length;
+	for (let i = 0; i < LENGTH; i++) {
+		pokemons.pop();
+	}
 	const storagedData = JSON.parse(localStorage.getItem("pokemons"));
 	storagedData.forEach((pokemonObject) => {
 		pokemons.push(new Pokemon(pokemonObject.data));

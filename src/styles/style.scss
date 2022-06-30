@@ -85,6 +85,18 @@ header {
 		border: none;
 		outline: none;
 		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.83);
+	}
+	#sortBtn {
+		position: relative;
+		top: 5px;
+		width: 30px;
+		height: 30px;
+		font-size: 0.4rem;
+		background: rgba(255, 255, 255, 0.83);
+		border: none;
+		border-radius: 50%;
+		margin-left: 5px;
 	}
 }
 .cards-container {
@@ -188,9 +200,10 @@ header {
 }
 
 .types {
-	@include flex(row, flex-start, center);
+	@include flex(row, space-around, center);
 	flex-wrap: wrap;
 	font-size: 1rem;
+
 	span {
 		margin-right: 0.5em;
 	}

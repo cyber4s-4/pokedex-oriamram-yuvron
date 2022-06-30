@@ -37,7 +37,9 @@ export class Pokemon {
 		this.element.innerHTML += types;
 		parent.appendChild(this.element);
 	}
-
+	unrender() {
+		this.element.remove();
+	}
 	show(): void {
 		this.element.style.display = "block";
 	}
