@@ -14,6 +14,11 @@ const sort = document.getElementById("sort") as HTMLInputElement;
 const sortBtn = document.getElementById("sortBtn");
 const fTypes1 = document.getElementById("types") as HTMLInputElement;
 const fTypes2 = document.getElementById("types2") as HTMLInputElement;
+const samePokemonBtn = document.getElementById("samePokemon");
+samePokemonBtn.addEventListener("click", () => {
+	samePokemonBtn.classList.toggle("same");
+	filterByTypes(filterByType);
+});
 fTypes1.addEventListener("change", () => {
 	filterByType.type1 = fTypes1.value;
 	filterByTypes(filterByType);
@@ -30,36 +35,23 @@ let pokemons: Pokemon[] = [];
 
 loadPage();
 
-// function sortBy(sortBy) {
-// 	switch (sortBy) {
-// 		case "lowHigh":
-// 			pokemons.sort((a, b) => {
-// 				if (a.data.id < b.data.id) return -1;
-// 				else if (a.data.id > b.data.id) return 1;
-// 				else return 0;
-// 			});
-// 			break;
-// 		case "highLow":
-// 			pokemons.sort((a, b) => {
-// 				if (a.data.id < b.data.id) return 1;
-// 				else if (a.data.id > b.data.id) return -1;
-// 				else return 0;
-// 			});
-// 			break;
-// 	}
-// }
 function filterByTypes(types) {
 	pokemons.forEach((pokemon) => {
 		pokemon.hide();
 		let type1 = pokemon.data.specs.types[0];
 		let type2 = pokemon.data.specs.types[1];
-		if (types.type1 === "none")
-			if (types.type2 === type1 || types.type2 === type2) pokemon.show();
-			else if (types.type2 === "none") if (types.type1 === type1 || types.type1 === type2) pokemon.show();
-		if (types.type1 === "none" && types.type2 === "none") pokemon.show();
-		else {
-			if (type1 === types.type1 || type1 === types.type2) pokemon.show();
-			if (type2 !== undefined && (type2 === types.type1 || type2 === types.type2)) pokemon.show();
+		if (!samePokemonBtn.classList.contains("same")) {
+			if (types.type1 === "none")
+				if (types.type2 === type1 || types.type2 === type2) pokemon.show();
+				else if (types.type2 === "none") if (types.type1 === type1 || types.type1 === type2) pokemon.show();
+			if (types.type1 === "none" && types.type2 === "none") pokemon.show();
+			else {
+				if (type1 === types.type1 || type1 === types.type2) pokemon.show();
+				if (type2 !== undefined && (type2 === types.type1 || type2 === types.type2)) pokemon.show();
+			}
+		} else {
+			if (types.type1 === "none" && types.type2 === "none") pokemon.show();
+			else if (type1 === types.type1 && type2 === types.type2) pokemon.show();
 		}
 	});
 }
@@ -139,8 +131,6 @@ function formatNumber(i: number): string {
 // Adds to local storage
 function addToLocalStorage(): void {
 	localStorage.setItem("pokemons", JSON.stringify(pokemons.map((pokemon) => pokemon.data)));
-	// function addToLocalStorage(pokemons): void {
-	// localStorage.setItem("pokemons", JSON.stringify(pokemons));
 }
 
 // Getting pokemons from local storage and pushing them to the local data

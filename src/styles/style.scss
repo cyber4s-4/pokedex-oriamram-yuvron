@@ -81,6 +81,16 @@ header {
 	border-radius: 35px;
 	align-items: center;
 	justify-content: space-around;
+	#samePokemon {
+		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.83);
+		border: none;
+		font-weight: 600;
+		margin-left: 20px;
+	}
+	.same {
+		box-shadow: 1px 1px 20px rgba(255, 255, 255, 0.7);
+	}
 	label {
 		margin-left: 20px;
 		font-weight: 500;
@@ -91,17 +101,6 @@ header {
 		outline: none;
 		border-radius: 10px;
 		background: rgba(255, 255, 255, 0.83);
-	}
-	#sortBtn {
-		position: relative;
-		top: 5px;
-		width: 30px;
-		height: 30px;
-		font-size: 0.4rem;
-		background: rgba(255, 255, 255, 0.83);
-		border: none;
-		border-radius: 50%;
-		margin-left: 5px;
 	}
 
 	.filters {
