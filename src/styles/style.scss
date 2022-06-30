@@ -32,7 +32,6 @@ header {
 	@include flex(row, space-between, center);
 	background-color: black;
 	width: 100%;
-	margin-bottom: 0.4em;
 	text-align: center;
 	font-size: 2rem;
 	padding: 1em 3em;
@@ -57,12 +56,64 @@ header {
 	@include flex(row, center, center);
 	flex-wrap: wrap;
 	width: 90%;
+	padding: 2em 0;
 }
+
+.loader {
+	display: none;
+}
+
+.loader.active {
+	@include flex(row, center, center);
+	height: 400px;
+}
+
+@keyframes load {
+	0% {
+		transform: translateY(0);
+	}
+	30% {
+		transform: translateY(-40px);
+	}
+	60%,
+	100% {
+		transform: translateY(0);
+	}
+}
+
+.circle {
+	height: 25px;
+	width: 25px;
+	background-color: rgb(0, 0, 0);
+	border-radius: 50%;
+	margin: 0 0.2em;
+	animation: load 1s ease-in-out infinite;
+	&:nth-of-type(2) {
+		animation-delay: 0.1s;
+	}
+	&:nth-of-type(3) {
+		animation-delay: 0.2s;
+	}
+	&:nth-of-type(4) {
+		animation-delay: 0.3s;
+	}
+	&:nth-of-type(5) {
+		animation-delay: 0.4s;
+	}
+}
+
+// .loader {
+// 	width: 200px;
+// 	height: 200px;
+// 	border-radius: 50%;
+// 	border: 20px solid gray;
+// 	border-top-color: black;
+// }
 
 .card {
 	cursor: pointer;
-	width: 200px;
 	font-size: 1.5rem;
+	width: 200px;
 	padding: 1em;
 	margin: 1em;
 	background-color: rgb(235, 235, 235);

@@ -5,6 +5,7 @@ const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
 const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
 // const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
 // const CHAIN_EVOLUTIONS_NUMBER = 78;
+const loader = document.getElementById("loader");
 
 const pokemons: Pokemon[] = [];
 
@@ -12,12 +13,14 @@ renderAllPokemons(document.getElementById("cards-container"), pokemons);
 
 // Calls the render function on all the pokemons
 async function renderAllPokemons(container, pokemons): Promise<void> {
+	loader.classList.add("active");
 	if (!localStorage.getItem("pokemons")) {
 		localStorage.clear();
 		await createPokemons(pokemons);
 		addToLocalStorage(pokemons);
 	}
 	addToLocalData(pokemons);
+	loader.classList.remove("active");
 	pokemons.forEach((pokemon) => pokemon.render(container));
 }
 
