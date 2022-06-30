@@ -11,10 +11,14 @@ export interface PokemonSpecs {
 	weight: number;
 }
 
+export function ori() {}
+
 export class Pokemon {
+	//what a kaka
 	data: PokemonData;
 
 	constructor(data: PokemonData) {
+		//oh no
 		this.data = data;
 	}
 
