@@ -99,12 +99,6 @@ header {
 		margin-left: 5px;
 	}
 }
-.cards-container {
-	@include flex(row, center, center);
-	flex-wrap: wrap;
-	width: 90%;
-	padding-bottom: 2em;
-}
 
 #loader {
 	display: none;
@@ -190,7 +184,7 @@ header {
 	}
 	.id {
 		font-size: 1.3rem;
-		margin-left: 0.5em;
+		margin-left: 0.4em;
 		color: gray;
 		&::before {
 			content: "#";
@@ -212,7 +206,22 @@ header {
 }
 
 // =================================================================
+// Scrollbar
+
+::-webkit-scrollbar {
+	width: 15px;
+	display: block;
+}
+::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, 0.404);
+}
+::-webkit-scrollbar-thumb {
+	background: rgb(209, 209, 209);
+}
+
+// =================================================================
 // Pokemon Types
+
 .fire {
 	background-color: #ff4422;
 	border: 2px solid darken(#ff4422, 10%);
@@ -284,15 +293,4 @@ header {
 .ground {
 	background-color: #ddbb55;
 	border: 2px solid darken(#ddbb55, 10%);
-}
-
-::-webkit-scrollbar {
-	width: 15px;
-	display: block;
-}
-::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, 0.404);
-}
-::-webkit-scrollbar-thumb {
-	background: rgb(209, 209, 209);
 }
