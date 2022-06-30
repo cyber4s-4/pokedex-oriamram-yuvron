@@ -1,7 +1,8 @@
 @import "config";
 
 body {
-	font-family: "Lato", sans-serif;
+	display: flex;
+
 	background-image: url("../images/background.jpg");
 	&::before {
 		content: "";
@@ -21,7 +22,6 @@ body {
 	width: 90%;
 	max-width: 1400px;
 	margin: 0 auto;
-	z-index: 1;
 }
 
 // =================================================================
@@ -66,12 +66,33 @@ header {
 // =================================================================
 // Cards
 // =================================================================
-
+.filter {
+	display: flex;
+	position: sticky;
+	top: 15px;
+	margin-top: 15px;
+	height: 100px;
+	width: 90%;
+	z-index: 1;
+	background: rgba(102, 102, 102, 0.39);
+	border-radius: 35px;
+	align-items: center;
+	label {
+		margin-left: 20px;
+		font-weight: 500;
+	}
+	#sort {
+		margin-left: 5px;
+		border: none;
+		outline: none;
+		border-radius: 10px;
+	}
+}
 .cards-container {
 	@include flex(row, center, center);
 	flex-wrap: wrap;
 	width: 90%;
-	padding: 2em 0;
+	padding-bottom: 2em;
 }
 
 .loader {
@@ -161,3 +182,14 @@ header {
 }
 
 // =================================================================
+
+::-webkit-scrollbar {
+	width: 15px;
+	display: block;
+}
+::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, 0.404);
+}
+::-webkit-scrollbar-thumb {
+	background: rgb(209, 209, 209);
+}
