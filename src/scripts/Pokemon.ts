@@ -29,6 +29,7 @@ export class Pokemon {
         	<span class="id">${this.data.id}</span>
        	</div>`;
 		let types = "<div class='types'>";
+
 		for (const type of this.data.specs.types) {
 			types += `<span class="${type}">${type}</span>`;
 		}
@@ -36,7 +37,9 @@ export class Pokemon {
 		this.element.innerHTML += types;
 		parent.appendChild(this.element);
 	}
-
+	unrender() {
+		this.element.remove();
+	}
 	show(): void {
 		this.element.style.display = "block";
 	}

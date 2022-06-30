@@ -8,10 +8,12 @@
 		<script src="https://kit.fontawesome.com/cede34b398.js" crossorigin="anonymous"></script>
 		<script src="scripts/app.js" defer></script>
 		<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/1200px-Pok%C3%A9_Ball_icon.svg.png" />
-		<title>Pokedex</title>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+		<title>Pokedex4s</title>
 	</head>
 	<body>
 		<div class="container">
+			
 			<header>
 				<h1><a href="/">Pokedex4s</a></h1>
 				<div class="search-container">
@@ -19,7 +21,23 @@
 					<button id="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
 				</div>
 			</header>
+
+			<div class="filter">
+				<div class="sort">
+					<label for="sort">Sort By</label>
+					<select name="sort" id="sort">
+						<option value="none">none</option>
+						<option value="lowHigh">From Low To High</option>
+						<option value="highLow">From HighTo Low</option>
+					</select>
+					<button id = "sortBtn"><span class="material-symbols-outlined">
+						done
+						</span></button>
+				</div>
+			</div>
+
 			<div id="not-found"></div>
+
 			<div class="cards-container" id="cards-container">
 				<div id="loader">
 					<div class="circle"></div>
@@ -29,6 +47,11 @@
 					<div class="circle"></div>
 				</div>
 			</div>
+			
+		</div>			
 		</div>
+		
+		
+
 	</body>
 </html>

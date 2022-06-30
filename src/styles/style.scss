@@ -1,6 +1,7 @@
 @import "config";
 
 body {
+	display: flex;
 	background-image: url("../images/background.jpg");
 	&::before {
 		content: "";
@@ -21,7 +22,6 @@ body {
 	max-width: 1400px;
 	min-height: 100vh;
 	margin: 0 auto;
-	z-index: 1;
 }
 
 // =================================================================
@@ -44,9 +44,7 @@ header {
 		font-size: 1.4rem;
 		border-radius: 0.3em;
 		overflow: hidden;
-		&:active {
-			// box-shadow: rgba(255, 255, 255, 0.5) 0 0 20px;
-		}
+
 		#search-box {
 			background-color: transparent;
 			border: 0;
@@ -66,6 +64,47 @@ header {
 // =================================================================
 // Cards
 // =================================================================
+
+.filter {
+	display: flex;
+	position: sticky;
+	top: 15px;
+	margin-top: 15px;
+	height: 100px;
+	width: 90%;
+	z-index: 1;
+	background: rgba(102, 102, 102, 0.39);
+	border-radius: 35px;
+	align-items: center;
+	label {
+		margin-left: 20px;
+		font-weight: 500;
+	}
+	#sort {
+		margin-left: 5px;
+		border: none;
+		outline: none;
+		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.83);
+	}
+	#sortBtn {
+		position: relative;
+		top: 5px;
+		width: 30px;
+		height: 30px;
+		font-size: 0.4rem;
+		background: rgba(255, 255, 255, 0.83);
+		border: none;
+		border-radius: 50%;
+		margin-left: 5px;
+	}
+}
+.cards-container {
+	@include flex(row, center, center);
+	flex-wrap: wrap;
+	width: 90%;
+	padding-bottom: 2em;
+}
 
 #loader {
 	display: none;
@@ -163,6 +202,7 @@ header {
 	@include flex(row, space-evenly, center);
 	flex-wrap: wrap;
 	font-size: 1rem;
+
 	span {
 		text-transform: capitalize;
 		color: white;
@@ -244,4 +284,15 @@ header {
 .ground {
 	background-color: #ddbb55;
 	border: 2px solid darken(#ddbb55, 10%);
+}
+
+::-webkit-scrollbar {
+	width: 15px;
+	display: block;
+}
+::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, 0.404);
+}
+::-webkit-scrollbar-thumb {
+	background: rgb(209, 209, 209);
 }
