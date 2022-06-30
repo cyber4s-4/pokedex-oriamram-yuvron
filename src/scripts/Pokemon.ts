@@ -29,6 +29,7 @@ export class Pokemon {
         	<span class="id">${this.data.id}</span>
        	</div>`;
 		let types = "<div class='types'>";
+
 		for (const type of this.data.specs.types) {
 			types += `<span class="${type}">${type}</span>`;
 		}
