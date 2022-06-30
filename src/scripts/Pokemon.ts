@@ -11,8 +11,6 @@ export interface PokemonSpecs {
 	weight: number;
 }
 
-export function ori() {}
-
 export class Pokemon {
 	//what a kaka
 	data: PokemonData;
