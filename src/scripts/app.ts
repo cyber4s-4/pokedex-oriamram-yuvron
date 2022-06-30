@@ -6,10 +6,14 @@ const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/deta
 // const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
 // const CHAIN_EVOLUTIONS_NUMBER = 78;
 const loader = document.getElementById("loader");
+const searchButton = document.getElementById("search-button");
+const cardsContainer = document.getElementById("cards-container");
 
 const pokemons: Pokemon[] = [];
 
-renderAllPokemons(document.getElementById("cards-container"), pokemons);
+renderAllPokemons(cardsContainer, pokemons);
+
+searchButton.addEventListener("click", searchPokemons);
 
 // Calls the render function on all the pokemons
 async function renderAllPokemons(container, pokemons): Promise<void> {
@@ -72,6 +76,14 @@ function addToLocalData(pokemons): void {
 	storagedData.forEach((pokemonObject) => {
 		pokemons.push(new Pokemon(pokemonObject.data));
 	});
+}
+
+function searchPokemons(): void {
+	const searchBox = document.getElementById("search-box") as HTMLInputElement;
+	const searchTerm = searchBox.value;
+	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm));
+	cardsContainer.innerHTML = "";
+	matchingPokemons.forEach((pokemon) => pokemon.render(cardsContainer));
 }
 
 // }

@@ -17,7 +17,7 @@ body {
 
 .container {
 	@include flex(column, flex-start, center);
-	background-color: rgba(255, 255, 255, 0.95);
+	background-color: rgba(255, 255, 255, 0.9);
 	width: 90%;
 	max-width: 1400px;
 	margin: 0 auto;
@@ -33,18 +33,32 @@ header {
 	background-color: black;
 	width: 100%;
 	text-align: center;
-	font-size: 2rem;
 	padding: 1em 3em;
 	h1 {
 		font-size: 6rem;
 		color: white;
 		cursor: pointer;
 	}
-
-	.search-area {
+	.search-container {
+		background-color: lightgray;
+		font-size: 1.4rem;
+		border-radius: 0.3em;
+		overflow: hidden;
+		&:active {
+			// box-shadow: rgba(255, 255, 255, 0.5) 0 0 20px;
+		}
+		#search-box {
+			background-color: transparent;
+			border: 0;
+		}
 		#search-button {
 			border: 0;
 			color: white;
+			background-color: gray;
+			transition: background-color 0.2s;
+			&:hover {
+				background-color: darken(gray, 10%);
+			}
 		}
 	}
 }
