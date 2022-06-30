@@ -5,9 +5,10 @@ const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
 const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
 // const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
 // const CHAIN_EVOLUTIONS_NUMBER = 78;
-const loader = document.getElementById("loader");
 const searchButton = document.getElementById("search-button");
 const cardsContainer = document.getElementById("cards-container");
+const loader = document.getElementById("loader");
+const notFound = document.getElementById("not-found");
 
 const pokemons: Pokemon[] = [];
 
@@ -78,12 +79,22 @@ function addToLocalData(pokemons): void {
 	});
 }
 
+function hideAllPokemons(): void {
+	pokemons.forEach((pokemon) => pokemon.hide());
+}
+
 function searchPokemons(): void {
 	const searchBox = document.getElementById("search-box") as HTMLInputElement;
 	const searchTerm = searchBox.value;
 	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm));
-	cardsContainer.innerHTML = "";
-	matchingPokemons.forEach((pokemon) => pokemon.render(cardsContainer));
+	hideAllPokemons();
+	notFound.classList.remove("active");
+	if (matchingPokemons.length === 0) {
+		notFound.innerHTML = `There isn't any pokemon matching "${searchTerm}"`;
+		notFound.classList.add("active");
+	} else {
+		matchingPokemons.forEach((pokemon) => pokemon.show());
+	}
 }
 
 // }

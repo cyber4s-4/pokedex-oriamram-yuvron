@@ -20,6 +20,7 @@ body {
 	background-color: rgba(255, 255, 255, 0.9);
 	width: 90%;
 	max-width: 1400px;
+	min-height: 100vh;
 	margin: 0 auto;
 	z-index: 1;
 }
@@ -67,20 +68,32 @@ header {
 // Cards
 // =================================================================
 
-.cards-container {
-	@include flex(row, center, center);
-	flex-wrap: wrap;
-	width: 90%;
-	padding: 2em 0;
-}
-
-.loader {
+#loader {
 	display: none;
-}
-
-.loader.active {
-	@include flex(row, center, center);
-	height: 400px;
+	&.active {
+		@include flex(row, center, center);
+		height: 400px;
+	}
+	.circle {
+		height: 25px;
+		width: 25px;
+		background-color: rgb(0, 0, 0);
+		border-radius: 50%;
+		margin: 0 0.2em;
+		animation: load 1s ease-in-out infinite;
+		&:nth-of-type(2) {
+			animation-delay: 0.1s;
+		}
+		&:nth-of-type(3) {
+			animation-delay: 0.2s;
+		}
+		&:nth-of-type(4) {
+			animation-delay: 0.3s;
+		}
+		&:nth-of-type(5) {
+			animation-delay: 0.4s;
+		}
+	}
 }
 
 @keyframes load {
@@ -96,34 +109,21 @@ header {
 	}
 }
 
-.circle {
-	height: 25px;
-	width: 25px;
-	background-color: rgb(0, 0, 0);
-	border-radius: 50%;
-	margin: 0 0.2em;
-	animation: load 1s ease-in-out infinite;
-	&:nth-of-type(2) {
-		animation-delay: 0.1s;
-	}
-	&:nth-of-type(3) {
-		animation-delay: 0.2s;
-	}
-	&:nth-of-type(4) {
-		animation-delay: 0.3s;
-	}
-	&:nth-of-type(5) {
-		animation-delay: 0.4s;
+#not-found {
+	display: none;
+	font-size: 2.5rem;
+	margin: 2em 0;
+	&.active {
+		display: block;
 	}
 }
 
-// .loader {
-// 	width: 200px;
-// 	height: 200px;
-// 	border-radius: 50%;
-// 	border: 20px solid gray;
-// 	border-top-color: black;
-// }
+.cards-container {
+	@include flex(row, center, center);
+	flex-wrap: wrap;
+	width: 90%;
+	padding: 2em 0;
+}
 
 .card {
 	cursor: pointer;
