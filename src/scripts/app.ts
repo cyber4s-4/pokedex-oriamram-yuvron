@@ -44,7 +44,7 @@ async function createPokemons(pokemons): Promise<void> {
 	for (let i = 0; i < promises.length; i++) {
 		const pokemonObject = await promises[i];
 		const pokemonSpecs: PokemonSpecs = {
-			type: pokemonObject.types.map((type) => type.type.name),
+			types: pokemonObject.types.map((type) => type.type.name),
 			height: pokemonObject.height / 10,
 			weight: pokemonObject.weight / 10,
 		};
@@ -85,7 +85,7 @@ function hideAllPokemons(): void {
 
 function searchPokemons(): void {
 	const searchBox = document.getElementById("search-box") as HTMLInputElement;
-	const searchTerm = searchBox.value;
+	const searchTerm = searchBox.value.toLowerCase();
 	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm));
 	hideAllPokemons();
 	notFound.classList.remove("active");

@@ -6,7 +6,7 @@ export interface PokemonData {
 	// evolutions: Pokemon[];
 }
 export interface PokemonSpecs {
-	type: string[];
+	types: string[];
 	height: number;
 	weight: number;
 }
@@ -28,6 +28,12 @@ export class Pokemon {
             <span class="name">${this.data.name}</span>
         	<span class="id">${this.data.id}</span>
        	</div>`;
+		let types = "<div class='types'>";
+		for (const type of this.data.specs.types) {
+			types += `<span class="${type}">${type}</span>`;
+		}
+		types += "</div>";
+		this.element.innerHTML += types;
 		parent.appendChild(this.element);
 	}
 
