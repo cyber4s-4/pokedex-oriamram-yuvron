@@ -6,11 +6,11 @@ const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/deta
 // const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
 // const CHAIN_EVOLUTIONS_NUMBER = 78;
 
-let pokemons: Pokemon[] = [];
+const pokemons: Pokemon[] = [];
 
 renderAllPokemons(document.getElementById("cards-container"), pokemons);
 
-//calls the render function on all the pokemons
+// Calls the render function on all the pokemons
 async function renderAllPokemons(container, pokemons): Promise<void> {
 	if (!localStorage.getItem("pokemons")) {
 		localStorage.clear();
@@ -20,11 +20,13 @@ async function renderAllPokemons(container, pokemons): Promise<void> {
 	addToLocalData(pokemons);
 	pokemons.forEach((pokemon) => pokemon.render(container));
 }
-//getting json from fetch
+
+// Getting json from fetch
 async function getFetch(url: string): Promise<{ results }> {
 	return await fetch(url).then((res) => res.json());
 }
-//creates pokemons and push them to the arr
+
+// Creates pokemons and push them to the arr
 async function createPokemons(pokemons): Promise<void> {
 	const pokemonNames = await getFetch(ALL_POKEMONS_URL).then((res) => res.results);
 	const promises = [];
@@ -47,24 +49,26 @@ async function createPokemons(pokemons): Promise<void> {
 		pokemons.push(new Pokemon(pokemonData));
 	}
 }
-//putting zeros before a number if needed
+
+// Puts zeros before a number if needed
 function formatNumber(i: number): string {
 	if (i / 10 < 1) return "0".repeat(2) + i;
 	else if (i / 100 < 1) return "0".repeat(1) + i;
 	else if (i / 1000 < 1) return `${i}`;
 }
 
-function addToLocalStorage(pokemons) {
+// Adds to local storage
+function addToLocalStorage(pokemons): void {
 	localStorage.setItem("pokemons", JSON.stringify(pokemons));
 }
-//getting pokemons from local storage and push them to the local data
-function addToLocalData(pokemons) {
+
+// Getting pokemons from local storage and pushing them to the local data
+function addToLocalData(pokemons): void {
 	pokemons.map((pokemon) => undefined);
-	let storageData = JSON.parse(localStorage.getItem("pokemons"));
-	storageData.forEach((pokemonObject) => {
+	const storagedData = JSON.parse(localStorage.getItem("pokemons"));
+	storagedData.forEach((pokemonObject) => {
 		pokemons.push(new Pokemon(pokemonObject.data));
 	});
-	// console.log(pokemons);
 }
 
 // }
