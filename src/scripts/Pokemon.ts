@@ -22,7 +22,7 @@ export class Pokemon {
 	render(parent: HTMLElement): void {
 		this.element = document.createElement("div");
 		this.element.classList.add("card");
-		this.element.addEventListener("click", () => (window.location.href = `/pokemon?id=${this.data.id}`));
+		this.element.addEventListener("click", () => (window.location.href = `pokemon.html?id=${this.data.id}`));
 		this.element.innerHTML = `
         <img src=${this.data.img} />
         <div class="pokemon-title">

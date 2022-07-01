@@ -132,12 +132,12 @@ function formatNumber(i: number): string {
 }
 
 // Adds to local storage
-function addToLocalStorage(): void {
+export function addToLocalStorage(): void {
 	localStorage.setItem("pokemons", JSON.stringify(pokemons.map((pokemon) => pokemon.data)));
 }
 
 // Getting pokemons from local storage and pushing them to the local data
-function getFromLocalStorage(): void {
+export function getFromLocalStorage(): void {
 	const storagedData = JSON.parse(localStorage.getItem("pokemons"));
 	pokemons = storagedData.map((pokemonData) => new Pokemon(pokemonData));
 }
