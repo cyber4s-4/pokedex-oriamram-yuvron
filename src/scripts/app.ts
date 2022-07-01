@@ -148,7 +148,7 @@ function hideAllPokemons(): void {
 
 function searchPokemons(): void {
 	const searchTerm = searchBox.value.toLowerCase();
-	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm));
+	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm) || String(pokemon.data.id).includes(searchTerm));
 	hideAllPokemons();
 	notFound.classList.remove("active");
 	if (matchingPokemons.length === 0) {
