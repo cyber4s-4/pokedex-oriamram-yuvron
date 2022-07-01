@@ -8,55 +8,45 @@ const POKEMONS_AMOUNT = 151;
 const searchBox = document.getElementById("search-box") as HTMLInputElement;
 const searchButton = document.getElementById("search-button");
 const cardsContainer = document.getElementById("cards-container");
+const sorter = document.getElementById("sorter") as HTMLSelectElement;
+const combinedTypes = document.getElementById("combined-types") as HTMLInputElement;
 const loader = document.getElementById("loader");
 const notFound = document.getElementById("not-found");
-const sort = document.getElementById("sort") as HTMLInputElement;
-const sortBtn = document.getElementById("sortBtn");
-const fTypes1 = document.getElementById("types") as HTMLInputElement;
-const fTypes2 = document.getElementById("types2") as HTMLInputElement;
-const samePokemonBtn = document.getElementById("samePokemon");
-samePokemonBtn.addEventListener("click", () => {
-	samePokemonBtn.classList.toggle("same");
-	filterByTypes(filterByType);
-});
-fTypes1.addEventListener("change", () => {
-	filterByType.type1 = fTypes1.value;
-	filterByTypes(filterByType);
-});
-fTypes2.addEventListener("change", () => {
-	filterByType.type2 = fTypes2.value;
-	filterByTypes(filterByType);
-});
-const filterByType = {
-	type1: "",
-	type2: "",
-};
+const sideMenuToggler = document.getElementById("side-menu-toggler");
 let pokemons: Pokemon[] = [];
 
 loadPage();
 
-function filterByTypes(types): void {
+combinedTypes.addEventListener("click", filterPokemons);
+
+sideMenuToggler.addEventListener("click", () => {
+	document.getElementById("side-menu").classList.toggle("active");
+});
+const filters = [];
+document.querySelectorAll(".type-filter").forEach((element) =>
+	element.addEventListener("click", () => {
+		element.classList.toggle(element.innerHTML);
+		if (filters.indexOf(element.innerHTML) === -1) filters.push(element.innerHTML);
+		else filters.splice(filters.indexOf(element.innerHTML), 1);
+		filterPokemons();
+	})
+);
+
+function filterPokemons(): void {
+	hideAllPokemons();
 	pokemons.forEach((pokemon) => {
-		pokemon.hide();
-		if (samePokemonBtn.classList.contains("same")) {
-			if (types.type1 && types.type2) {
-				if (pokemon.data.specs.types.includes(types.type1) && pokemon.data.specs.types.includes(types.type2)) pokemon.show();
-			} else if (types.type1) {
-				if (pokemon.data.specs.types.includes(types.type1)) pokemon.show();
-			} else if (types.type2) {
-				if (pokemon.data.specs.types.includes(types.type2)) pokemon.show();
-			} else pokemon.show();
+		if (filters.length === 0) {
+			pokemon.show();
+			return;
+		}
+		if (combinedTypes.checked) {
+			if (filters.every((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
 		} else {
-			if (types.type1) {
-				if (pokemon.data.specs.types.includes(types.type1)) pokemon.show();
-			}
-			if (types.type2) {
-				if (pokemon.data.specs.types.includes(types.type2)) pokemon.show();
-			}
-			if (!types.type1 && !types.type2) pokemon.show();
+			if (filters.some((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
 		}
 	});
 }
+
 // Calls the render function on all the pokemons
 async function loadPage(): Promise<void> {
 	loader.classList.add("active");
@@ -69,12 +59,12 @@ async function loadPage(): Promise<void> {
 	renderAllPokemons(cardsContainer);
 }
 
-sort.addEventListener("change", () => {
-	const sortRequest = sort.value.split("-") as ["id" | "name", "ascending" | "descending"];
-	sortBy(sortRequest[0], sortRequest[1]);
+sorter.addEventListener("change", () => {
+	const sortRequest = sorter.value.split("-") as ["id" | "name", "ascending" | "descending"];
+	sortPokemons(sortRequest[0], sortRequest[1]);
 	removeAllPokemons();
 	renderAllPokemons(cardsContainer);
-	filterByTypes(filterByType);
+	filterPokemons();
 });
 
 searchButton.addEventListener("click", searchPokemons);
@@ -83,7 +73,7 @@ document.addEventListener("keydown", (e) => {
 	if (e.code === "Enter" && document.activeElement === searchBox) searchPokemons();
 });
 
-function sortBy(sortType: "id" | "name", direction: "ascending" | "descending"): void {
+function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descending"): void {
 	const directionNumber = direction === "ascending" ? 1 : -1;
 	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
 }
