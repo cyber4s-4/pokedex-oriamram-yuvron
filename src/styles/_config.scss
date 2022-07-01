@@ -7,6 +7,17 @@
 	align-items: $align;
 }
 
+@mixin position($position, $top, $left) {
+	position: $position;
+	top: $top;
+	left: $left;
+}
+
+@mixin size($width, $height) {
+	width: $width;
+	height: $height;
+}
+
 *,
 *::after,
 *::before {

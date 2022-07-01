@@ -12,8 +12,46 @@
 		<title>Pokedex4s</title>
 	</head>
 	<body>
+		<div id="side-menu" class="active">
+			<button id="side-menu-toggler"></button>
+			<div class="sort">
+				<p>Sort Pokemons</p>
+				<select id="sorter">
+					<option value="id-ascending">ID - Low to High</option>
+					<option value="id-descending">ID - High to Low</option>
+					<option value="name-ascending">Name - A to Z</option>
+					<option value="name-descending">Name - Z to A</option>
+				</select>
+			</div>
+			<div class="filter">
+				<p>Filter Pokemons by Type</p>
+				<div class="type-filters">
+					<button class="type-filter">normal</button>
+					<button class="type-filter">fire</button>
+					<button class="type-filter">water</button>
+					<button class="type-filter">flying</button>
+					<button class="type-filter">grass</button>
+					<button class="type-filter">fighting</button>
+					<button class="type-filter">poison</button>
+					<button class="type-filter">electric</button>
+					<button class="type-filter">ground</button>
+					<button class="type-filter">rock</button>
+					<button class="type-filter">psychic</button>
+					<button class="type-filter">ice</button>
+					<button class="type-filter">bug</button>
+					<button class="type-filter">ghost</button>
+					<button class="type-filter">steel</button>
+					<button class="type-filter">dragon</button>
+					<button class="type-filter">dark</button>
+					<button class="type-filter">fairy</button>
+				</div>
+				<label>
+					<input id="combined-types" type="checkbox" />
+					Combined types
+				</label>
+			</div>
+		</div>
 		<div class="container">
-			
 			<header>
 				<h1><a href="/">Pokedex4s</a></h1>
 				<div class="search-container">
@@ -21,67 +59,7 @@
 					<button id="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
 				</div>
 			</header>
-
-			<div class="filterContainer">
-				<div class="sort">
-					<label for="sort">Sort By</label>
-					<select name="sort" id="sort">
-						<option value="id-ascending">ID: Low to High</option>
-						<option value="id-descending">ID: High to Low</option>
-						<option value="name-ascending">Name: A to Z</option>
-						<option value="name-descending">Name: Z to A</option>
-					</select>
-				</div>
-				<div class="filters">
-					<label for="filter">Filter By: </label>
-					<select name="types" id="types" multiple size="3">
-						<option value="" selected>None</option>
-						<option value="normal">Normal</option>
-						<option value="fire">Fire</option>
-						<option value="water">Water</option>
-						<option value="flying">Flying</option>
-						<option value="grass">Grass</option>
-						<option value="fighting">Fighting</option>
-						<option value="poison">Poison</option>
-						<option value="electric">Electric</option>
-						<option value="ground">Ground</option>
-						<option value="rock">Rock</option>
-						<option value="psychic">Psychic</option>
-						<option value="ice">Ice</option>
-						<option value="bug">Bug</option>
-						<option value="ghost">Ghost</option>
-						<option value="steel">Steel</option>
-						<option value="dragon">Dragon</option>
-						<option value="dark">Dark </option>
-						<option value="fairy">Fairy</option>
-					</select>
-					<select name="types" id="types2" multiple size="3">
-						<option value="" selected	>None</option>
-						<option value="normal">Normal</option>
-						<option value="fire">Fire</option>
-						<option value="water">Water</option>
-						<option value="flying">Flying</option>
-						<option value="grass">Grass</option>
-						<option value="fighting">Fighting</option>
-						<option value="poison">Poison</option>
-						<option value="electric">Electric</option>
-						<option value="ground">Ground</option>
-						<option value="rock">Rock</option>
-						<option value="psychic">Psychic</option>
-						<option value="ice">Ice</option>
-						<option value="bug">Bug</option>
-						<option value="ghost">Ghost</option>
-						<option value="steel">Steel</option>
-						<option value="dragon">Dragon</option>
-						<option value="dark">Dark </option>
-						<option value="fairy">Fairy</option>
-					</select>
-					<button id="samePokemon">Same Pokemon </button>
-				</div>
-			</div>
-
 			<div id="not-found"></div>
-
 			<div class="cards-container" id="cards-container">
 				<div id="loader">
 					<div class="circle"></div>
@@ -91,8 +69,6 @@
 					<div class="circle"></div>
 				</div>
 			</div>
-			
-		</div>			
-		</div >
+		</div>
 	</body>
 </html>
