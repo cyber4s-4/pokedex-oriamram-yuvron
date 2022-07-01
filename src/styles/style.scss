@@ -70,17 +70,15 @@ header {
 // =================================================================
 
 .filterContainer {
-	display: flex;
+	@include flex(row, space-evenly, center);
 	position: sticky;
 	top: 15px;
-	margin-top: 15px;
-	height: 100px;
+	margin-top: 1em;
+	padding: 0.5em;
 	width: 90%;
 	z-index: 1;
-	background: rgba(102, 102, 102, 0.39);
+	background: rgba(102, 102, 102, 0.7);
 	border-radius: 35px;
-	align-items: center;
-	justify-content: space-around;
 	#samePokemon {
 		border-radius: 10px;
 		background: rgba(255, 255, 255, 0.83);
@@ -93,7 +91,8 @@ header {
 	}
 	label {
 		margin-left: 20px;
-		font-weight: 500;
+		font-weight: 700;
+		font-size: 1.2rem;
 	}
 	#sort {
 		margin-left: 5px;
@@ -104,10 +103,8 @@ header {
 	}
 
 	.filters {
-		display: flex;
-		align-items: center;
+		@include flex(row, flex-start, center);
 		width: 50%;
-		height: 90%;
 		label {
 			font-weight: 600;
 			font-size: 1.2rem;
@@ -121,7 +118,6 @@ header {
 		}
 		option {
 			border-radius: 10px;
-
 			&:hover {
 				background: rgba(255, 255, 255, 1);
 			}
@@ -131,16 +127,18 @@ header {
 			border: none;
 			outline: none;
 			border-radius: 10px;
-			background: rgba(255, 255, 255, 0.83);
+			background: rgba(255, 255, 255, 0.8);
 		}
-
-		::-webkit-scrollbar-track {
-			background: rgba(0, 0, 0, 0.404);
-			border-radius: 40px;
-		}
-		::-webkit-scrollbar-thumb {
-			background: rgb(209, 209, 209);
-			border-radius: 40px;
+		::-webkit-scrollbar {
+			width: 10px;
+			&-track {
+				background: rgb(180, 180, 180);
+				border-radius: 5px;
+			}
+			&-thumb {
+				background: rgb(210, 210, 210);
+				border-radius: 5px;
+			}
 		}
 	}
 }
