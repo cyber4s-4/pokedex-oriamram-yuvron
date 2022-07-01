@@ -1,4 +1,5 @@
 @import "config";
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
 body {
 	display: flex;
 	justify-content: center;
@@ -25,6 +26,46 @@ body {
 			position: absolute;
 			left: 17%;
 			top: 37%;
+		}
+		.dataContainer {
+			font-family: "VT323", monospace;
+			position: absolute;
+			display: flex;
+			flex-wrap: wrap;
+			right: 10%;
+			top: 37%;
+			justify-content: start;
+			align-items: center;
+			width: 30%;
+			height: 12%;
+			span {
+				margin-right: 2vh;
+				width: 110px;
+			}
+			#weight,
+			#name {
+				width: 150px;
+			}
+			label {
+				font-size: 2.5vh;
+				font-weight: 700;
+			}
+			h1 {
+				font-size: 2.3vh;
+				font-weight: 400;
+				display: inline;
+			}
+			#weight,
+			#height {
+				label {
+					font-size: 2.3vh;
+					font-weight: 700;
+				}
+				h1 {
+					font-size: 2.2vh;
+					display: inline;
+				}
+			}
 		}
 	}
 }
