@@ -1,12 +1,9 @@
 import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
 const urlParams = new URLSearchParams(window.location.search);
 const URLid = +urlParams.get("id");
-const pokedex = document.getElementsByClassName("container")[0] as HTMLElement;
-const name = document.getElementById("name") as HTMLElement;
-const id = document.getElementById("id") as HTMLElement;
-const weight = document.getElementById("weight") as HTMLElement;
-const height = document.getElementById("height") as HTMLElement;
+const pokedex = document.getElementsByClassName("pokedexContainer")[0] as HTMLElement;
 const statsElement = document.querySelectorAll(".stats");
+const typeContainer = document.getElementsByClassName("types")[0] as HTMLElement;
 
 let pokemons: Pokemon[] = [];
 getFromLocalStorage();
@@ -14,6 +11,8 @@ let POKEMON: Pokemon;
 pokemons.forEach((pokemon) => {
 	if (pokemon.data.id === URLid) POKEMON = pokemon;
 });
+// addStats();
+// function addStats() {
 statsElement.forEach((element) => {
 	const stat = document.createElement("h1");
 	let starter;
@@ -34,7 +33,13 @@ statsElement.forEach((element) => {
 	}
 	element.appendChild(stat);
 });
-
+POKEMON.data.specs.types.forEach((type) => {
+	const typeElement = document.createElement("h1");
+	typeElement.innerHTML = type;
+	typeElement.classList.add(type);
+	typeContainer.appendChild(typeElement);
+});
+// }
 pokedex.innerHTML += `<img src="${POKEMON.data.img}" alt="pokemon" class="pokemonImg" />`;
 
 function addToLocalStorage(): void {
