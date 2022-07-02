@@ -1,6 +1,7 @@
 @import "config";
 @import "style.scss";
 @import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+$white: rgb(231, 231, 231);
 body {
 	display: flex;
 	justify-content: center;
@@ -104,6 +105,100 @@ body {
 				border-radius: 10px;
 				font-size: 1.4vw;
 				margin-left: 6.5%;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 600px) {
+	body {
+		.pokedexContainer {
+			display: flex;
+			position: relative;
+			justify-content: center;
+			align-items: center;
+			height: 150vw;
+			.pokemonImg {
+				width: 55%;
+				@include position(absolute, 24.5%, 22.5%);
+			}
+			.pokedex {
+				height: 100%;
+			}
+			#id {
+				@include position(absolute, 74%, 10%);
+				width: 10%;
+				font-size: 5vw;
+				text-align: center;
+				color: $white;
+				&::before {
+					content: "#";
+				}
+			}
+			#name {
+				@include position(absolute, 57.5%, 30%);
+				@include size(13%, 5.5%);
+				text-align: center;
+				font-size: 8vw;
+			}
+			.sizes {
+				@include position(absolute, 79.5%, 29.5%);
+				@include size(27%, 10%);
+				color: $white;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-around;
+				font-size: 4vw;
+
+				label {
+					font-size: 4.5vw;
+				}
+				#height {
+					margin: 0;
+					width: 95%;
+				}
+				#weight {
+					width: 95%;
+				}
+			}
+			#nextPage {
+				@include position(absolute, 81.2%, 85%);
+				@include size(8%, 4%);
+				border: none;
+				border-radius: 7px;
+				transition: 0.2s;
+				&:hover {
+					background: rgba(255, 255, 255, 0.1);
+					box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
+				}
+			}
+			#prevPage {
+				@include position(absolute, 81.2%, 68%);
+				@include size(8%, 4%);
+				border: none;
+				border-radius: 7px;
+				transition: 0.2s;
+				&:hover {
+					background: rgba(255, 255, 255, 0.1);
+					box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
+				}
+			}
+			.types {
+				display: flex;
+				justify-content: flex-start;
+				@include size(40%, 7%);
+				@include position(absolute, 71%, 25%);
+
+				.type {
+					width: 40%;
+					height: 60%;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					border-radius: 10px;
+					font-size: 4vw;
+					margin-left: 5%;
+				}
 			}
 		}
 	}
