@@ -4,8 +4,6 @@ import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
 const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
 const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
 const POKEMONS_AMOUNT = 151;
-// const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
-// const CHAIN_EVOLUTIONS_NUMBER = 78;
 const cardsContainer = document.getElementById("cards-container");
 const searchBox = document.getElementById("search-box") as HTMLInputElement;
 const combinedTypes = document.getElementById("combined-types") as HTMLInputElement;
@@ -131,24 +129,3 @@ function searchPokemons(): void {
 async function getFetch(url: string): Promise<any> {
 	return await fetch(url).then((res) => res.json());
 }
-
-// }
-
-// let pokemonObjects: Object[] = [];
-// for (let i = 0; i < pokemonNames.length; i++) {
-// 	pokemonObjects[i] = await promises[i];
-//     pokemons
-// async function a(index) {
-
-// 	const evoloutions: { chain }[] = [await getFetch(evolutions + index + 1)];
-// 	for (const evol of evoloutions) {
-// 		const chain = evol.chain;
-// 		const b = (chain) => {
-// 			if (!chain) return [];
-// 			return [chain.species.name, ...b(chain.evolves_to[0])];
-// 		};
-// 		return b(chain);
-// 	}
-// }
-
-// async function addEvolutions(evolutions: []) {}
