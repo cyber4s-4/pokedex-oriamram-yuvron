@@ -11,35 +11,21 @@ let POKEMON: Pokemon;
 pokemons.forEach((pokemon) => {
 	if (pokemon.data.id === URLid) POKEMON = pokemon;
 });
-// addStats();
-// function addStats() {
-statsElement.forEach((element) => {
-	const stat = document.createElement("h1");
-	let starter;
-	element.id === "name" || element.id === "id" ? (starter = POKEMON.data) : (starter = POKEMON.data.specs);
-	switch (element.id) {
-		case "name":
-			stat.innerHTML = starter.name;
-			break;
-		case "id":
-			stat.innerHTML = starter.id.toString();
-			break;
-		case "weight":
-			stat.innerHTML = starter.weight.toString();
-			break;
-		case "height":
-			stat.innerHTML = starter.height.toString();
-			break;
-	}
-	element.appendChild(stat);
-});
-POKEMON.data.specs.types.forEach((type) => {
-	const typeElement = document.createElement("h1");
-	typeElement.innerHTML = type;
-	typeElement.classList.add(type);
-	typeContainer.appendChild(typeElement);
-});
-// }
+addStats();
+function addStats() {
+	statsElement.forEach((element) => {
+		let starter;
+		element.id === "name" || element.id === "id" ? (starter = POKEMON.data) : (starter = POKEMON.data.specs);
+		element.innerHTML = starter[element.id];
+	});
+	POKEMON.data.specs.types.forEach((type) => {
+		const typeElement = document.createElement("h1");
+		typeElement.innerHTML = type;
+		typeElement.classList.add(type);
+		typeElement.classList.add("type");
+		typeContainer.appendChild(typeElement);
+	});
+}
 pokedex.innerHTML += `<img src="${POKEMON.data.img}" alt="pokemon" class="pokemonImg" />`;
 
 function addToLocalStorage(): void {
