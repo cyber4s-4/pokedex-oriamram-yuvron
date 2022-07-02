@@ -1,16 +1,3 @@
-export interface PokemonData {
-	name: string;
-	id: number;
-	img: string;
-	specs: PokemonSpecs;
-	// evolutions: Pokemon[];
-}
-export interface PokemonSpecs {
-	types: string[];
-	height: number;
-	weight: number;
-}
-
 export class Pokemon {
 	data: PokemonData;
 	element: HTMLElement;
@@ -49,4 +36,18 @@ export class Pokemon {
 	hide(): void {
 		this.element.style.display = "none";
 	}
+}
+
+export interface PokemonData {
+	name: string;
+	id: number;
+	img: string;
+	specs: PokemonSpecs;
+	// evolutions: Pokemon[];
+}
+
+export interface PokemonSpecs {
+	types: string[];
+	height: number;
+	weight: number;
 }

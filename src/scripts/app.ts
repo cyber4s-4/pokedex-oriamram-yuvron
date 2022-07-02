@@ -1,3 +1,4 @@
+import { Utility } from "./utility";
 import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
 
 const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
@@ -5,90 +6,70 @@ const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/deta
 const POKEMONS_AMOUNT = 151;
 // const evolutions = "https://pokeapi.co/api/v2/evolution-chain/";
 // const CHAIN_EVOLUTIONS_NUMBER = 78;
-const searchBox = document.getElementById("search-box") as HTMLInputElement;
-const searchButton = document.getElementById("search-button");
 const cardsContainer = document.getElementById("cards-container");
-const sorter = document.getElementById("sorter") as HTMLSelectElement;
+const searchBox = document.getElementById("search-box") as HTMLInputElement;
 const combinedTypes = document.getElementById("combined-types") as HTMLInputElement;
-const loader = document.getElementById("loader");
 const notFound = document.getElementById("not-found");
-const sideMenuToggler = document.getElementById("side-menu-toggler");
+
 let pokemons: Pokemon[] = [];
+
+const pokemonsCollectiveMethods = {
+	render: (): void => pokemons.forEach((pokemon) => pokemon.render(cardsContainer)),
+	remove: (): void => pokemons.forEach((pokemon) => pokemon.unrender()),
+	show: (): void => pokemons.forEach((pokemon) => pokemon.show()),
+	hide: (): void => pokemons.forEach((pokemon) => pokemon.hide()),
+};
+
+const filters = [];
 
 loadPage();
 
-combinedTypes.addEventListener("click", filterPokemons);
-
-sideMenuToggler.addEventListener("click", () => {
-	document.getElementById("side-menu").classList.toggle("active");
-});
-const filters = [];
-document.querySelectorAll(".type-filter").forEach((element) =>
-	element.addEventListener("click", () => {
-		element.classList.toggle(element.innerHTML);
-		if (filters.indexOf(element.innerHTML) === -1) filters.push(element.innerHTML);
-		else filters.splice(filters.indexOf(element.innerHTML), 1);
-		filterPokemons();
-	})
-);
-
-function filterPokemons(): void {
-	hideAllPokemons();
-	pokemons.forEach((pokemon) => {
-		if (filters.length === 0) {
-			pokemon.show();
-			return;
-		}
-		if (combinedTypes.checked) {
-			if (filters.every((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
-		} else {
-			if (filters.some((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
-		}
-	});
-}
-
-// Calls the render function on all the pokemons
+// Renders all the pokemons and initializes all the event listeners
 async function loadPage(): Promise<void> {
+	const loader = document.getElementById("loader");
 	loader.classList.add("active");
 	if (!localStorage.getItem("pokemons")) {
 		await createPokemons();
-		addToLocalStorage();
+		Utility.addPokemonsToLocalStorage(pokemons);
 	}
-	getFromLocalStorage();
+	pokemons = Utility.getPokemonsFromLocalStorage();
+	initializeEventListeners();
 	loader.classList.remove("active");
-	renderAllPokemons(cardsContainer);
+	pokemonsCollectiveMethods.render();
 }
 
-sorter.addEventListener("change", () => {
-	const sortRequest = sorter.value.split("-") as ["id" | "name", "ascending" | "descending"];
-	sortPokemons(sortRequest[0], sortRequest[1]);
-	removeAllPokemons();
-	renderAllPokemons(cardsContainer);
-	filterPokemons();
-});
-
-searchButton.addEventListener("click", searchPokemons);
-
-document.addEventListener("keydown", (e) => {
-	if (e.code === "Enter" && document.activeElement === searchBox) searchPokemons();
-});
-
-function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descending"): void {
-	const directionNumber = direction === "ascending" ? 1 : -1;
-	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
-}
-
-// Calls the render function on all the pokemons
-async function renderAllPokemons(container): Promise<void> {
-	pokemons.forEach((pokemon) => pokemon.render(container));
-}
-
-function removeAllPokemons(): void {
-	pokemons.forEach((pokemon) => pokemon.unrender());
-}
-// Getting json from fetch
-async function getFetch(url: string): Promise<{ results }> {
-	return await fetch(url).then((res) => res.json());
+function initializeEventListeners(): void {
+	// Search button and Enter Key
+	const searchButton = document.getElementById("search-button");
+	searchButton.addEventListener("click", searchPokemons);
+	document.addEventListener("keydown", (e) => {
+		if (e.code === "Enter" && document.activeElement === searchBox) searchPokemons();
+	});
+	// Side menu toggler
+	const sideMenuToggler = document.getElementById("side-menu-toggler");
+	sideMenuToggler.addEventListener("click", () => {
+		document.getElementById("side-menu").classList.toggle("active");
+	});
+	// Sorter
+	const sorter = document.getElementById("sorter") as HTMLSelectElement;
+	sorter.addEventListener("change", () => {
+		const sortRequest = sorter.value.split("-") as ["id" | "name", "ascending" | "descending"];
+		sortPokemons(sortRequest[0], sortRequest[1]);
+		pokemonsCollectiveMethods.remove();
+		pokemonsCollectiveMethods.render();
+		filterPokemons();
+	});
+	// Type filters
+	document.querySelectorAll(".type-filter").forEach((element) =>
+		element.addEventListener("click", () => {
+			element.classList.toggle(element.innerHTML);
+			if (filters.indexOf(element.innerHTML) === -1) filters.push(element.innerHTML);
+			else filters.splice(filters.indexOf(element.innerHTML), 1);
+			filterPokemons();
+		})
+	);
+	// Combined Types
+	combinedTypes.addEventListener("click", filterPokemons);
 }
 
 // Creates pokemons and push them to the arr
@@ -107,39 +88,36 @@ async function createPokemons(): Promise<void> {
 		const pokemonData: PokemonData = {
 			name: pokemonObject.species.name,
 			id: pokemonObject.id,
-			img: `${POKEMON_IMG_URL + formatNumber(i + 1)}.png`,
+			img: `${POKEMON_IMG_URL + "0".repeat(3 - String(i + 1).length) + (i + 1)}.png`,
 			specs: pokemonSpecs,
 		};
 		pokemons.push(new Pokemon(pokemonData));
 	}
 }
 
-// Puts zeros before a number if needed
-function formatNumber(i: number): string {
-	if (i / 10 < 1) return "0".repeat(2) + i;
-	else if (i / 100 < 1) return "0".repeat(1) + i;
-	else if (i / 1000 < 1) return `${i}`;
+function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descending"): void {
+	const directionNumber = direction === "ascending" ? 1 : -1;
+	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
 }
 
-// Adds to local storage
-export function addToLocalStorage(): void {
-	localStorage.setItem("pokemons", JSON.stringify(pokemons.map((pokemon) => pokemon.data)));
-}
-
-// Getting pokemons from local storage and pushing them to the local data
-export function getFromLocalStorage(): void {
-	const storagedData = JSON.parse(localStorage.getItem("pokemons"));
-	pokemons = storagedData.map((pokemonData) => new Pokemon(pokemonData));
-}
-
-function hideAllPokemons(): void {
-	pokemons.forEach((pokemon) => pokemon.hide());
+function filterPokemons(): void {
+	pokemonsCollectiveMethods.hide();
+	pokemons.forEach((pokemon) => {
+		if (filters.length === 0) pokemon.show();
+		else {
+			if (combinedTypes.checked) {
+				if (filters.every((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
+			} else {
+				if (filters.some((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
+			}
+		}
+	});
 }
 
 function searchPokemons(): void {
 	const searchTerm = searchBox.value.toLowerCase();
 	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm) || String(pokemon.data.id).includes(searchTerm));
-	hideAllPokemons();
+	pokemonsCollectiveMethods.hide();
 	notFound.classList.remove("active");
 	if (matchingPokemons.length === 0) {
 		notFound.innerHTML = `There isn't any pokemon matching "${searchTerm}"`;
@@ -147,6 +125,11 @@ function searchPokemons(): void {
 	} else {
 		matchingPokemons.forEach((pokemon) => pokemon.show());
 	}
+}
+
+// Getting json from fetch
+async function getFetch(url: string): Promise<any> {
+	return await fetch(url).then((res) => res.json());
 }
 
 // }

@@ -8,7 +8,7 @@ body {
 		z-index: -1;
 		@include position(fixed, 0, 0);
 		@include size(100vw, 100vh);
-		background-color: rgba(255, 255, 255, 0.3);
+		background-color: rgba(220, 220, 220, 0.4);
 	}
 }
 
@@ -66,15 +66,16 @@ header {
 
 #side-menu {
 	z-index: 1;
-	@include position(fixed, 30%, calc(100% - 225px));
-	@include size(225px, 40%);
-	background-color: lightgray;
+	@include position(fixed, 50%, calc(100% - 235px));
+	width: 235px;
+	background-color: rgb(221, 221, 221);
 	padding: 0.5%;
 	border: 6px solid black;
 	border-right: 0;
 	border-radius: 20px 0 0 20px;
-	transform: translateX(95%);
-	transition: transform 0.3s ease-in-out;
+	text-align: center;
+	transform: translate(95%, -50%);
+	transition: transform 0.5s ease-in-out;
 	#side-menu-toggler {
 		@include position(absolute, 50%, 0%);
 		@include size(45px, 60px);
@@ -92,7 +93,7 @@ header {
 			background-color: white;
 			transform: translate(-50%, 0);
 			transform-origin: center center;
-			transition: transform 0.3s;
+			transition: transform 0.5s;
 		}
 		&::before {
 			top: 40%;
@@ -102,7 +103,7 @@ header {
 		}
 	}
 	&.active {
-		transform: translateX(0);
+		transform: translate(0, -50%);
 		#side-menu-toggler {
 			&::before {
 				transform: translate(-50%, 200%) rotate(-45deg);
@@ -112,9 +113,49 @@ header {
 			}
 		}
 	}
+	p {
+		font-size: 1.2rem;
+		font-weight: bold;
+	}
+	#sorter {
+		border-radius: 8px;
+		margin: 0.8em 0;
+		padding: 0.2em 0.3em;
+	}
+	.filter {
+		label {
+			@include flex(row, center, flex-end);
+			font-size: 1.2rem;
+			input {
+				appearance: none;
+				font-size: 0.9rem;
+				position: relative;
+				@include size(22px, 22px);
+				background-color: white;
+				border: 2px solid black;
+				border-radius: 4px;
+				margin-right: 0.3em;
+				padding: 0;
+				&::before {
+					content: "";
+					@include position(absolute, 50%, 50%);
+					@include size(14px, 14px);
+					background-color: rebeccapurple;
+					border-radius: 2px;
+					transform: translate(-50%, -50%) scale(0);
+					transform-origin: center center;
+					transition: 120ms transform ease-in-out;
+				}
+				&:checked::before {
+					transform: translate(-50%, -50%) scale(1);
+				}
+			}
+		}
+	}
 	.type-filters {
 		@include flex(row, space-evenly, center);
 		flex-wrap: wrap;
+		margin: 0.4em 0;
 		.type-filter {
 			font-size: 0.8rem;
 			font-weight: bold;
