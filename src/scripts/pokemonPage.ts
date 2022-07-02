@@ -15,10 +15,7 @@ pokedex.addEventListener("click", (e) => {
 const prevPage = document.getElementById("prevPage");
 const pokemons: Pokemon[] = Utility.getPokemonsFromLocalStorage();
 const POKEMON = pokemons.find((pokemon) => pokemon.data.id === URLid);
-pokedex.addEventListener("click", (e) => {
-	let element = e.target as HTMLElement;
-	element.id === nextPage.id ? (window.location.href = `/pokemon.html?id=${POKEMON.data.id + 1}`) : null;
-});
+
 pokedex.addEventListener("click", (e) => {
 	let element = e.target as HTMLElement;
 	element.id === prevPage.id ? (window.location.href = `/pokemon.html?id=${POKEMON.data.id - 1}`) : null;
