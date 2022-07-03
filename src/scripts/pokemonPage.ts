@@ -1,5 +1,5 @@
 import { Utility } from "./utility";
-import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
+import { Pokemon } from "./Pokemon";
 
 const urlParams = new URLSearchParams(window.location.search);
 const URLid = +urlParams.get("id");
@@ -13,19 +13,15 @@ miniDex.classList.add("pokedex");
 const typeContainer = document.getElementsByClassName("types")[0] as HTMLElement;
 const nextPage = document.querySelector("#nextPage") as HTMLElement;
 pokedex.addEventListener("click", (e) => {
-	let element = e.target as HTMLElement;
-	element.id === nextPage.id ? (window.location.href = `/pokemon.html?id=${POKEMON.data.id + 1}`) : null;
+	const element = e.target as HTMLElement;
+	if (element.id === nextPage.id) window.location.href = `/pokemon.html?id=${POKEMON.data.id + 1}`;
+	else if (element.id === prevPage.id) window.location.href = `/pokemon.html?id=${POKEMON.data.id - 1}`;
 });
 window.onresize = onResize;
 window.onload = onResize;
 const prevPage = document.getElementById("prevPage");
 const pokemons: Pokemon[] = Utility.getPokemonsFromLocalStorage();
 const POKEMON = pokemons.find((pokemon) => pokemon.data.id === URLid);
-
-pokedex.addEventListener("click", (e) => {
-	let element = e.target as HTMLElement;
-	element.id === prevPage.id ? (window.location.href = `/pokemon.html?id=${POKEMON.data.id - 1}`) : null;
-});
 
 addStats();
 function addStats(): void {
@@ -43,9 +39,9 @@ function addStats(): void {
 }
 
 pokedex.innerHTML += `<img src="${POKEMON.data.img}" alt="pokemon" class="pokemonImg" />`;
-let done: boolean = false;
+let done = false;
 
-function onResize() {
+function onResize(): void {
 	if (window.innerWidth <= 600 && !done) {
 		document.getElementsByClassName("pokedex")[0].remove();
 		pokedex.appendChild(miniDex);
