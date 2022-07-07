@@ -1,8 +1,7 @@
 import { Utility } from "./utility";
 import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
 
-const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
-const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
+const GET_POKEMON_URL = "/api/";
 const POKEMONS_AMOUNT = 151;
 const cardsContainer = document.getElementById("cards-container");
 const searchBox = document.getElementById("search-box") as HTMLInputElement;
@@ -77,18 +76,7 @@ async function createPokemons(): Promise<void> {
 		promises.push(getFetch(GET_POKEMON_URL + (i + 1)));
 	}
 	for (let i = 0; i < promises.length; i++) {
-		const pokemonObject = await promises[i];
-		const pokemonSpecs: PokemonSpecs = {
-			types: pokemonObject.types.map((type) => type.type.name),
-			height: pokemonObject.height / 10,
-			weight: pokemonObject.weight / 10,
-		};
-		const pokemonData: PokemonData = {
-			name: pokemonObject.species.name,
-			id: pokemonObject.id,
-			img: `${POKEMON_IMG_URL + "0".repeat(3 - String(i + 1).length) + (i + 1)}.png`,
-			specs: pokemonSpecs,
-		};
+		const pokemonData = await promises[i];
 		pokemons.push(new Pokemon(pokemonData));
 	}
 }
