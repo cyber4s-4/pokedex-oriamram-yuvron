@@ -1,4 +1,4 @@
-import { Pokemon } from "./Pokemon";
+import { Pokemon } from "./pokemon";
 
 export class Utility {
 	static addPokemonsToLocalStorage(pokemons: Pokemon[]): void {

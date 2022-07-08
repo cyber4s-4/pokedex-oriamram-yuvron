@@ -1,5 +1,5 @@
 import { Utility } from "./utility";
-import { Pokemon } from "./Pokemon";
+import { Pokemon } from "./pokemon";
 
 const urlParams = new URLSearchParams(window.location.search);
 const URLid = +urlParams.get("id");

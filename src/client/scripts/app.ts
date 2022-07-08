@@ -1,5 +1,6 @@
 import { Utility } from "./utility";
-import { Pokemon, PokemonData, PokemonSpecs } from "./Pokemon";
+import { Pokemon, PokemonData, PokemonSpecs } from "./pokemon";
+import { filter } from "gulp-typescript";
 
 const GET_POKEMON_URL = "/api/";
 const POKEMONS_AMOUNT = 151;
@@ -17,7 +18,8 @@ const pokemonsCollectiveMethods = {
 	hide: (): void => pokemons.forEach((pokemon) => pokemon.hide()),
 };
 
-const filters = [];
+const filters: string[] = [];
+let searchTerm = "";
 
 loadPage();
 
@@ -38,9 +40,9 @@ async function loadPage(): Promise<void> {
 function initializeEventListeners(): void {
 	// Search button and Enter Key
 	const searchButton = document.getElementById("search-button");
-	searchButton.addEventListener("click", searchPokemons);
+	searchButton.addEventListener("click", applyAllFilters);
 	document.addEventListener("keydown", (e) => {
-		if (e.code === "Enter" && document.activeElement === searchBox) searchPokemons();
+		if (e.code === "Enter" && document.activeElement === searchBox) applyAllFilters();
 	});
 	// Side menu toggler
 	const sideMenuToggler = document.getElementById("side-menu-toggler");
@@ -54,7 +56,7 @@ function initializeEventListeners(): void {
 		sortPokemons(sortRequest[0], sortRequest[1]);
 		pokemonsCollectiveMethods.remove();
 		pokemonsCollectiveMethods.render();
-		filterPokemons();
+		applyAllFilters();
 	});
 	// Type filters
 	document.querySelectorAll(".type-filter").forEach((element) =>
@@ -62,7 +64,7 @@ function initializeEventListeners(): void {
 			element.classList.toggle(element.innerHTML);
 			if (filters.indexOf(element.innerHTML) === -1) filters.push(element.innerHTML);
 			else filters.splice(filters.indexOf(element.innerHTML), 1);
-			filterPokemons();
+			applyAllFilters();
 		})
 	);
 	// Combined Types
@@ -81,20 +83,29 @@ async function createPokemons(): Promise<void> {
 	}
 }
 
+function applyAllFilters(): void {
+	pokemonsCollectiveMethods.show();
+	filterPokemons();
+	searchPokemons();
+	checkIfNotFound();
+}
+
 function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descending"): void {
 	const directionNumber = direction === "ascending" ? 1 : -1;
 	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
 }
 
 function filterPokemons(): void {
-	pokemonsCollectiveMethods.hide();
 	pokemons.forEach((pokemon) => {
-		if (filters.length === 0) pokemon.show();
-		else {
+		if (filters.length > 0) {
 			if (combinedTypes.checked) {
-				if (filters.every((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
+				if (!filters.every((filter) => pokemon.data.specs.types.includes(filter))) {
+					pokemon.hide();
+				}
 			} else {
-				if (filters.some((filter) => pokemon.data.specs.types.includes(filter))) pokemon.show();
+				if (!filters.some((filter) => pokemon.data.specs.types.includes(filter))) {
+					pokemon.hide();
+				}
 			}
 		}
 	});
@@ -102,15 +113,18 @@ function filterPokemons(): void {
 
 function searchPokemons(): void {
 	const searchTerm = searchBox.value.toLowerCase();
-	const matchingPokemons = pokemons.filter((pokemon) => pokemon.data.name.includes(searchTerm) || String(pokemon.data.id).includes(searchTerm));
-	pokemonsCollectiveMethods.hide();
-	notFound.classList.remove("active");
-	if (matchingPokemons.length === 0) {
-		notFound.innerHTML = `There isn't any pokemon matching "${searchTerm}"`;
-		notFound.classList.add("active");
-	} else {
-		matchingPokemons.forEach((pokemon) => pokemon.show());
-	}
+	if (!searchTerm) return;
+	pokemons.forEach((pokemon) => {
+		if (!pokemon.data.name.includes(searchTerm) && !String(pokemon.data.id).includes(searchTerm)) {
+			pokemon.hide();
+		}
+	});
+}
+
+function checkIfNotFound(): void {
+	const activePokemons = pokemons.filter((pokemon) => pokemon.isActive);
+	if (activePokemons.length === 0) notFound.classList.add("active");
+	else notFound.classList.remove("active");
 }
 
 // Getting json from fetch

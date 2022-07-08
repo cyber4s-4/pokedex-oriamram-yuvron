@@ -1,6 +1,7 @@
 export class Pokemon {
 	data: PokemonData;
 	element: HTMLElement;
+	isActive: boolean;
 
 	constructor(data: PokemonData) {
 		this.data = data;
@@ -23,18 +24,22 @@ export class Pokemon {
 		types += "</div>";
 		this.element.innerHTML += types;
 		parent.appendChild(this.element);
+		this.isActive = true;
 	}
 
 	unrender(): void {
 		this.element.remove();
+		this.isActive = false;
 	}
 
 	show(): void {
 		this.element.style.display = "block";
+		this.isActive = true;
 	}
 
 	hide(): void {
 		this.element.style.display = "none";
+		this.isActive = true;
 	}
 }
 
