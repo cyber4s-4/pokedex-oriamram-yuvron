@@ -68,7 +68,7 @@ function initializeEventListeners(): void {
 		})
 	);
 	// Combined Types
-	combinedTypes.addEventListener("click", filterPokemons);
+	combinedTypes.addEventListener("click", applyAllFilters);
 }
 
 // Creates pokemons and push them to the arr
@@ -122,7 +122,9 @@ function searchPokemons(): void {
 }
 
 function checkIfNotFound(): void {
+	console.log("a");
 	const activePokemons = pokemons.filter((pokemon) => pokemon.isActive);
+	console.log(activePokemons);
 	if (activePokemons.length === 0) notFound.classList.add("active");
 	else notFound.classList.remove("active");
 }

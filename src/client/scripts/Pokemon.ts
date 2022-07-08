@@ -39,7 +39,7 @@ export class Pokemon {
 
 	hide(): void {
 		this.element.style.display = "none";
-		this.isActive = true;
+		this.isActive = false;
 	}
 }
 
