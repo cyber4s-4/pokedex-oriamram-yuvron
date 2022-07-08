@@ -9,22 +9,21 @@
 		<title>pokemon</title>
 	</head>
 	<body>
-		<div class="pokedexContainer">
-			<img src="./images/pokedex.png" alt="pokedex" class="pokedex" />
-			<span id="id" class="stats"> </span>
+		<div class="pokedex-container">
+			<img id="pokedex-image" src="images/pokedex.png" alt="" />
+			<span id="id" class="stats"></span>
 			<span id="name" class="stats"></span>
-
-			<span class="sizes">
-				<span id="weight" class="stats">
-					<label for="weight"> Weight:</label>
-				</span>
-				<span id="height" class="stats">
-					<label for="height"> Height:</label>
-				</span>
-			</span>
+			<div class="measurements">
+				<div>
+					<p>Weight: <span id="weight" class="stats"></span>kg</p>
+				</div>
+				<div>
+					<p>Height: <span id="height" class="stats"></span>m</p>
+				</div>
+			</div>
 			<div class="types"></div>
-			<button id="nextPage"></button>
-			<button id="prevPage"></button>
+			<button id="prevPage" class="page-button">BACK</button>
+			<button id="nextPage" class="page-button">NEXT</button>
 		</div>
 	</body>
 </html>

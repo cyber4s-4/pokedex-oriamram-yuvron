@@ -122,9 +122,7 @@ function searchPokemons(): void {
 }
 
 function checkIfNotFound(): void {
-	console.log("a");
 	const activePokemons = pokemons.filter((pokemon) => pokemon.isActive);
-	console.log(activePokemons);
 	if (activePokemons.length === 0) notFound.classList.add("active");
 	else notFound.classList.remove("active");
 }

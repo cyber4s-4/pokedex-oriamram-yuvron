@@ -1,15 +1,12 @@
 import { Utility } from "./utility";
 import { Pokemon } from "./pokemon";
 
+const SMALL_WIDTH = 600;
+
 const urlParams = new URLSearchParams(window.location.search);
 const URLid = +urlParams.get("id");
-const pokedex = document.getElementsByClassName("pokedexContainer")[0] as HTMLElement;
+const pokedex = document.getElementsByClassName("pokedex-container")[0] as HTMLElement;
 const statsElement = document.querySelectorAll(".stats");
-const pokedexImg = document.getElementsByClassName("pokedex")[0] as HTMLElement;
-const miniDex = document.createElement("img");
-miniDex.setAttribute("alt", "Pini Pokedex");
-miniDex.setAttribute("src", "./images/miniDex.jpg");
-miniDex.classList.add("pokedex");
 const typeContainer = document.getElementsByClassName("types")[0] as HTMLElement;
 const nextPage = document.querySelector("#nextPage") as HTMLElement;
 pokedex.addEventListener("click", (e) => {
@@ -27,28 +24,23 @@ addStats();
 function addStats(): void {
 	statsElement.forEach((element) => {
 		const starter = element.id === "name" || element.id === "id" ? POKEMON.data : POKEMON.data.specs;
-		element.innerHTML += starter[element.id];
+		element.innerHTML = starter[element.id];
 	});
 	POKEMON.data.specs.types.forEach((type) => {
-		const typeElement = document.createElement("h1");
-		typeElement.innerHTML = type;
-		typeElement.classList.add(type);
-		typeElement.classList.add("type");
-		typeContainer.appendChild(typeElement);
+		const typeElement = `<span class="type ${type}">${type}</span>`;
+		typeContainer.innerHTML += typeElement;
 	});
 }
 
-pokedex.innerHTML += `<img src="${POKEMON.data.img}" alt="pokemon" class="pokemonImg" />`;
-let done = false;
+pokedex.innerHTML += `<img src="${POKEMON.data.img}" alt="pokemon" id="image" />`;
+let smallPokedex = false;
 
 function onResize(): void {
-	if (window.innerWidth <= 600 && !done) {
-		document.getElementsByClassName("pokedex")[0].remove();
-		pokedex.appendChild(miniDex);
-		done = true;
-	} else if (window.innerWidth > 600 && done) {
-		document.getElementsByClassName("pokedex")[0].remove();
-		pokedex.appendChild(pokedexImg);
-		done = false;
+	if (window.innerWidth <= SMALL_WIDTH && !smallPokedex) {
+		(document.getElementById("pokedex-image") as HTMLImageElement).src = "../images/pokedex-small.jpg";
+		smallPokedex = true;
+	} else if (window.innerWidth > SMALL_WIDTH && smallPokedex) {
+		(document.getElementById("pokedex-image") as HTMLImageElement).src = "../images/pokedex.png";
+		smallPokedex = false;
 	}
 }

@@ -1,205 +1,141 @@
 @import "config";
-@import "style.scss";
+@import "common";
+
 @import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
-$white: rgb(231, 231, 231);
+
 body {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-image: url("../images/background.jpg");
-	min-height: 100vh;
+	@include size(100vw, 100vh);
+	@include flex(row, center, center);
 	font-family: "VT323", monospace;
 	color: rgb(43, 43, 43);
-	&::before {
-		content: "";
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		z-index: -1;
-		background-color: rgba(255, 255, 255, 0.5);
+	overflow: hidden;
+}
+
+.pokedex-container {
+	position: relative;
+	width: 90%;
+	#pokedex-image {
+		width: 100%;
 	}
-	.pokedexContainer {
-		display: flex;
-		position: relative;
-		justify-content: center;
-		height: 47vw;
-		.pokemonImg {
-			width: 20%;
-			position: absolute;
-			left: 19.5%;
-			top: 35%;
+	#image {
+		@include position(absolute, 34.7%, 19.1%);
+		width: 20.4%;
+	}
+	#id {
+		@include position(absolute, 17.5%, 11.9%);
+		width: 5.5%;
+		font-size: 2.5vw;
+		text-align: center;
+		&::before {
+			content: "#";
 		}
-		#id {
-			@include position(absolute, 17.5%, 12%);
-			width: 5.5%;
-			font-size: 2vw;
+	}
+	#name {
+		@include flex(row, center, center);
+		@include position(absolute, 76.5%, 13.2%);
+		@include size(12.6%, 5.5%);
+		text-align: center;
+		text-transform: capitalize;
+		font-size: 2.3vw;
+	}
+	.measurements {
+		@include flex(row, space-between, center);
+		@include position(absolute, 70.3%, 54.1%);
+		@include size(33.2%, 8.9%);
+		color: white;
+		font-size: 2.2vw;
+		div {
+			width: 45%;
 			text-align: center;
-			&::before {
-				content: "#";
-			}
 		}
-		#name {
-			@include position(absolute, 77%, 13%);
-			@include size(13%, 5.5%);
+	}
+	.types {
+		@include flex(row, flex-start, center);
+		@include size(14.2%, 6.6%);
+		@include position(absolute, 59.5%, 54.1%);
+		font-size: 1.5vw;
+		font-weight: bold;
+		.type {
+			padding: 0.2em 0;
+			border-radius: 6px;
+			width: 40%;
+			margin: 0 5%;
 			text-align: center;
-			font-size: 2.3vw;
 		}
-		.sizes {
-			@include position(absolute, 73%, 54.7%);
-			@include size(32%, 5%);
-			color: white;
-			display: flex;
-			justify-content: start;
-			font-size: 1.65vw;
-
-			label {
-				font-size: 2.1vw;
-			}
-			#height {
-				margin-left: 12%;
-			}
-			#weight {
-				width: 45%;
-			}
+	}
+	.page-button {
+		@include size(3%, 4%);
+		border: none;
+		border-radius: 7px;
+		transition: background-color 0.2s, box-shadow 0.2s;
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+			box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
 		}
-		#nextPage {
-			@include position(absolute, 77.8%, 42.6%);
-			@include size(3%, 4%);
-			border: none;
-			border-radius: 7px;
-			transition: 0.2s;
-			&:hover {
-				background: rgba(255, 255, 255, 0.1);
-				box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
-			}
-		}
-		#prevPage {
-			@include position(absolute, 77.8%, 38.3%);
-			@include size(3%, 4%);
-			border: none;
-			border-radius: 7px;
-			transition: 0.2s;
-
-			&:hover {
-				background: rgba(255, 255, 255, 0.1);
-				box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
-			}
-		}
-		.types {
-			position: absolute;
-			display: flex;
-			justify-content: flex-start;
-			width: 15.5%;
-			height: 7%;
-			bottom: 33.5%;
-			right: 31%;
-
-			.type {
-				width: 40%;
-				height: 70%;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				border-radius: 10px;
-				font-size: 1.4vw;
-				margin-left: 6.5%;
-			}
-		}
+	}
+	#nextPage {
+		@include position(absolute, 77.8%, 42.6%);
+	}
+	#prevPage {
+		@include position(absolute, 77.8%, 38.3%);
 	}
 }
 
-@media screen and (max-width: 600px) {
-	body {
-		.pokedexContainer {
-			display: flex;
-			position: relative;
-			justify-content: center;
-			align-items: center;
-			height: 150vw;
-			.pokemonImg {
-				width: 55%;
-				@include position(absolute, 24.5%, 22.5%);
+@media only screen and (max-width: 600px) {
+	.pokedex-container {
+		width: 100%;
+		#pokedex-image {
+			width: 100%;
+		}
+		#image {
+			@include position(absolute, 24.4%, 22.7%);
+			width: 54.2%;
+		}
+		#id {
+			@include position(absolute, 74.1%, 9.7%);
+			width: 11.3%;
+			font-size: 5.7vw;
+			color: white;
+		}
+		#name {
+			@include position(absolute, 57.2%, 21.8%);
+			@include size(52.1%, 5.1%);
+			font-size: 13vw;
+		}
+		.measurements {
+			@include flex(column, space-evenly, center);
+			@include position(absolute, 79.2%, 28.3%);
+			@include size(28.2%, 10.1%);
+			font-size: 4.2vw;
+			color: rgb(43, 43, 43);
+			div {
+				width: fit-content;
 			}
-			.pokedex {
-				height: 100%;
+		}
+		.types {
+			@include flex(row, flex-start, center);
+			@include size(35%, 5%);
+			@include position(absolute, 68%, 24.8%);
+			font-size: 4vw;
+			.type {
+				padding: 0.4em 0;
+				border-radius: 8px;
+				width: 45%;
+				margin: 0 2.5%;
 			}
-			#id {
-				@include position(absolute, 74%, 10%);
-				width: 10%;
-				font-size: 5vw;
-				text-align: center;
-				color: $white;
-				&::before {
-					content: "#";
-				}
-			}
-			#name {
-				@include position(absolute, 57.5%, 30%);
-				@include size(13%, 5.5%);
-				text-align: center;
-				font-size: 8vw;
-			}
-			.sizes {
-				@include position(absolute, 79.5%, 29.5%);
-				@include size(27%, 10%);
-				color: $white;
-				display: flex;
-				flex-direction: column;
-				justify-content: space-around;
-				font-size: 4vw;
-
-				label {
-					font-size: 4.5vw;
-				}
-				#height {
-					margin: 0;
-					width: 95%;
-				}
-				#weight {
-					width: 95%;
-				}
-			}
-			#nextPage {
-				@include position(absolute, 81.2%, 85%);
-				@include size(8%, 4%);
-				border: none;
-				border-radius: 7px;
-				transition: 0.2s;
-				&:hover {
-					background: rgba(255, 255, 255, 0.1);
-					box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
-				}
-			}
-			#prevPage {
-				@include position(absolute, 81.2%, 68%);
-				@include size(8%, 4%);
-				border: none;
-				border-radius: 7px;
-				transition: 0.2s;
-				&:hover {
-					background: rgba(255, 255, 255, 0.1);
-					box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
-				}
-			}
-			.types {
-				display: flex;
-				justify-content: flex-start;
-				@include size(40%, 7%);
-				@include position(absolute, 71%, 25%);
-
-				.type {
-					width: 40%;
-					height: 60%;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					border-radius: 10px;
-					font-size: 4vw;
-					margin-left: 5%;
-				}
-			}
+		}
+		.page-button {
+			@include size(9.7%, 5.2%);
+			background-color: rgba(0, 0, 160, 0.4);
+			font-size: 2.3vh;
+			color: white;
+			text-align: center;
+		}
+		#nextPage {
+			@include position(absolute, 80.2%, 84.6%);
+		}
+		#prevPage {
+			@include position(absolute, 80.2%, 66.8%);
 		}
 	}
 }

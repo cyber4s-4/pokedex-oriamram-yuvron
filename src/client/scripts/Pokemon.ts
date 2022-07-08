@@ -48,7 +48,6 @@ export interface PokemonData {
 	id: number;
 	img: string;
 	specs: PokemonSpecs;
-	// evolutions: Pokemon[];
 }
 
 export interface PokemonSpecs {
