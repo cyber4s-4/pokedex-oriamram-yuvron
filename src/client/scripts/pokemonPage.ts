@@ -23,12 +23,7 @@ function loadPage(): void {
 	onResize();
 	window.onresize = onResize;
 	addPokemonData();
-	console.log("1");
-	prevPage.addEventListener("click", () => {
-		console.log("a");
-	});
-	console.log("12");
-	// prevPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId - 1}`));
+	prevPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId - 1}`));
 	nextPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId + 1}`));
 }
 

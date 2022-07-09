@@ -24,7 +24,7 @@ let lastSort: ["id" | "name", "ascending" | "descending"] = ["id", "ascending"];
 
 loadPage();
 
-// Renders all the pokemons and initializes all the event listeners
+// Renders all the pokemons, getting the starred pokemon and initializes all the event listeners
 async function loadPage(): Promise<void> {
 	const loader = document.getElementById("loader");
 	loader.classList.add("active");
@@ -45,6 +45,7 @@ async function loadPage(): Promise<void> {
 	starCurrentPokemon();
 }
 
+// Initializes the event listeners of the different buttons in the page
 function initializeEventListeners(): void {
 	// Search button and Enter Key
 	const searchButton = document.getElementById("search-button");
@@ -80,7 +81,7 @@ function initializeEventListeners(): void {
 	combinedTypes.addEventListener("click", applyAllFilters);
 }
 
-// Creates pokemons and push them to the arr
+// Gets all the pokemons from the server and saves them
 async function createPokemons(): Promise<void> {
 	const promises = [];
 	for (let i = 0; i < POKEMONS_AMOUNT; i++) {
@@ -92,6 +93,7 @@ async function createPokemons(): Promise<void> {
 	}
 }
 
+// Applying all the filters
 function applyAllFilters(): void {
 	pokemonsCollectiveMethods.show();
 	filterPokemons();
@@ -101,6 +103,7 @@ function applyAllFilters(): void {
 	checkIfNotFound();
 }
 
+// Sorts pokemons by given category and order
 function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descending"): void {
 	const directionNumber = direction === "ascending" ? 1 : -1;
 	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
@@ -110,6 +113,7 @@ function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descend
 	}
 }
 
+// Hides all the pokemons that don't match the filter by type
 function filterPokemons(): void {
 	pokemons.forEach((pokemon) => {
 		if (filters.length > 0) {
@@ -126,6 +130,7 @@ function filterPokemons(): void {
 	});
 }
 
+// Hides all the pokemons that don't match the search
 function searchPokemons(): void {
 	const searchTerm = searchBox.value.toLowerCase();
 	if (!searchTerm) return;
@@ -136,12 +141,14 @@ function searchPokemons(): void {
 	});
 }
 
+// Displaying not found message if needed after every filter or search
 function checkIfNotFound(): void {
 	const activePokemons = pokemons.filter((pokemon) => pokemon.isActive);
 	if (activePokemons.length === 0) notFound.classList.add("active");
 	else notFound.classList.remove("active");
 }
 
+// Sets the event listeners for the star buttons of each pokemon
 function initializeStarListeners(): void {
 	const stars = [...document.getElementsByClassName("star")];
 	stars.forEach((star, index) =>
@@ -164,6 +171,7 @@ function initializeStarListeners(): void {
 	);
 }
 
+// Making the newly starred pokemon's star visible
 function starCurrentPokemon(): void {
 	if (currentStarPokemon) {
 		currentStarPokemon.element.classList.add("star-pokemon");
@@ -171,6 +179,8 @@ function starCurrentPokemon(): void {
 		currentStar.classList.add("active");
 	}
 }
+
+// Updating the currently starred Pokemon
 function updateStar(pokemon: Pokemon): void {
 	fetch("/api/star", {
 		method: "POST",
@@ -185,6 +195,7 @@ function updateStar(pokemon: Pokemon): void {
 	currentStarPokemon = pokemon;
 }
 
+// Deleting the currently starred Pokemon
 function deleteStar(): void {
 	fetch("/api/star", { method: "DELETE" });
 	currentStarPokemon.element.classList.remove("star-pokemon");

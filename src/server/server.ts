@@ -11,23 +11,33 @@ let star = JSON.parse(fs.readFileSync(STAR_PATH, "utf8"));
 
 const app = express();
 app.use(json());
+// Serves static files
 app.use(express.static(path.join(__dirname, "../client"), { extensions: ["html"] }));
+
+// Handles a request to get the currently starred pokemon
 app.get("/api/star", (req: Request, res: Response) => {
 	res.send(JSON.stringify(star));
 });
+
+// Handles a request to update the currently starred pokemon
 app.post("/api/star", (req: Request, res: Response) => {
 	star = req.body;
 	fs.writeFileSync(STAR_PATH, JSON.stringify(star));
 	res.sendStatus(201);
 });
+
+// Handles a request to delete the currently starred pokemon
 app.delete("/api/star", (req: Request, res: Response) => {
 	star = {};
 	fs.writeFileSync(STAR_PATH, JSON.stringify(star));
 	res.sendStatus(204);
 });
+
+// Handles a request to get the pokemons with the given ID
 app.get("/api/:id", (req: Request, res: Response) => {
 	const id = +req.params.id;
 	if (id < 1 || id > POKEMONS_AMOUNT) res.sendStatus(404);
 	else res.send(JSON.stringify(pokemons[id - 1]));
 });
+
 app.listen(3000, () => console.log("listening on port 3000"));
