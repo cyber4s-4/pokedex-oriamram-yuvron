@@ -6,24 +6,21 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="styles/pokemonPage.css" />
 		<script src="scripts/pokemonPage.js" defer></script>
-		<title>pokemon</title>
+		<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/1200px-Pok%C3%A9_Ball_icon.svg.png" />
+		<title>Pokemon</title>
 	</head>
 	<body>
 		<div class="pokedex-container">
 			<img id="pokedex-image" src="images/pokedex.png" alt="" />
-			<span id="id" class="stats"></span>
-			<span id="name" class="stats"></span>
+			<span id="id" class="pokemon-data"></span>
+			<span id="name" class="pokemon-data"></span>
 			<div class="measurements">
-				<div>
-					<p>Weight: <span id="weight" class="stats"></span>kg</p>
-				</div>
-				<div>
-					<p>Height: <span id="height" class="stats"></span>m</p>
-				</div>
+				<p>Weight: <span id="weight" class="pokemon-data"></span>kg</p>
+				<p>Height: <span id="height" class="pokemon-data"></span>m</p>
 			</div>
 			<div class="types"></div>
-			<button id="prevPage" class="page-button">BACK</button>
-			<button id="nextPage" class="page-button">NEXT</button>
+			<button id="prev-page" class="page-button">BACK</button>
+			<button id="next-page" class="page-button">NEXT</button>
 		</div>
 	</body>
 </html>

@@ -44,7 +44,7 @@ body {
 		@include size(33.2%, 8.9%);
 		color: white;
 		font-size: 2.2vw;
-		div {
+		p {
 			width: 45%;
 			text-align: center;
 		}
@@ -64,20 +64,29 @@ body {
 		}
 	}
 	.page-button {
-		@include size(3%, 4%);
+		@include size(2.6%, 4%);
 		border: none;
 		border-radius: 7px;
+		font-size: 1.1vw;
+		color: white;
+		padding: 0;
+		background-color: rgba(0, 0, 160, 0.2);
+		text-align: center;
 		transition: background-color 0.2s, box-shadow 0.2s;
 		&:hover {
 			background-color: rgba(255, 255, 255, 0.1);
 			box-shadow: 1px 1px 15px rgba(0, 0, 160, 0.6);
 		}
 	}
-	#nextPage {
-		@include position(absolute, 77.8%, 42.6%);
+	#prev-page {
+		@include position(absolute, 77.5%, 38.3%);
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
 	}
-	#prevPage {
-		@include position(absolute, 77.8%, 38.3%);
+	#next-page {
+		@include position(absolute, 77.5%, 43.1%);
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
 	}
 }
 
@@ -108,7 +117,7 @@ body {
 			@include size(28.2%, 10.1%);
 			font-size: 4.2vw;
 			color: rgb(43, 43, 43);
-			div {
+			p {
 				width: fit-content;
 			}
 		}
@@ -126,15 +135,15 @@ body {
 		}
 		.page-button {
 			@include size(9.7%, 5.2%);
-			background-color: rgba(0, 0, 160, 0.4);
+			background-color: rgba(0, 0, 160, 0.5);
 			font-size: 2.3vh;
 			color: white;
 			text-align: center;
 		}
-		#nextPage {
+		#next-page {
 			@include position(absolute, 80.2%, 84.6%);
 		}
-		#prevPage {
+		#prev-page {
 			@include position(absolute, 80.2%, 66.8%);
 		}
 	}
