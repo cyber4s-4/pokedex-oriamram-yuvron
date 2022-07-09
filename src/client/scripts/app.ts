@@ -1,6 +1,5 @@
 import { Utility } from "./utility";
 import { Pokemon, PokemonData, PokemonSpecs } from "./pokemon";
-import { filter } from "gulp-typescript";
 
 const GET_POKEMON_URL = "/api/";
 const POKEMONS_AMOUNT = 151;
@@ -34,8 +33,13 @@ async function loadPage(): Promise<void> {
 		Utility.addPokemonsToLocalStorage(pokemons);
 	}
 	pokemons = Utility.getPokemonsFromLocalStorage();
+	const serverStar = await fetchJson("/api/star");
 	initializeEventListeners();
 	loader.classList.remove("active");
+	if (serverStar.id) {
+		currentStarPokemon = pokemons[+serverStar.id - 1];
+		sortPokemons(lastSort[0], lastSort[1]);
+	}
 	pokemonsCollectiveMethods.render();
 	initializeStarListeners();
 	starCurrentPokemon();
@@ -168,21 +172,21 @@ function starCurrentPokemon(): void {
 	}
 }
 function updateStar(pokemon: Pokemon): void {
-	// fetch("/api/star",{
-	// 	method:"POST",
-	// 	headers: {
-	// 		'Accept': 'application/json',
-	// 		'Content-Type': 'application/json'
-	// 	},
-	// 	body: JSON.stringify(pokemon.data)
-	// })
+	fetch("/api/star", {
+		method: "POST",
+		headers: {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(pokemon.data),
+	});
 	pokemon.element.classList.add("star-pokemon");
 	if (currentStarPokemon) currentStarPokemon.element.classList.remove("star-pokemon");
 	currentStarPokemon = pokemon;
 }
 
 function deleteStar(): void {
-	// fetch("/api/star",{method:"DELETE"})
+	fetch("/api/star", { method: "DELETE" });
 	currentStarPokemon.element.classList.remove("star-pokemon");
 	currentStarPokemon = null;
 }

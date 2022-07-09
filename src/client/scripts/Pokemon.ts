@@ -13,7 +13,7 @@ export class Pokemon {
 		this.element.addEventListener("click", () => (window.location.href = `pokemon.html?id=${this.data.id}`));
 		this.element.innerHTML = `
 		<i class="star fa-solid fa-star"></i>
-        <img src=${this.data.img} />
+        <img src=${this.data.image} />
         <div class="pokemon-title">
             <span class="name">${this.data.name}</span>
         	<span class="id">${this.data.id}</span>
@@ -47,7 +47,7 @@ export class Pokemon {
 export interface PokemonData {
 	name: string;
 	id: number;
-	img: string;
+	image: string;
 	specs: PokemonSpecs;
 }
 

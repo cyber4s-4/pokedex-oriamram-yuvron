@@ -23,7 +23,12 @@ function loadPage(): void {
 	onResize();
 	window.onresize = onResize;
 	addPokemonData();
-	prevPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId - 1}`));
+	console.log("1");
+	prevPage.addEventListener("click", () => {
+		console.log("a");
+	});
+	console.log("12");
+	// prevPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId - 1}`));
 	nextPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId + 1}`));
 }
 
@@ -40,7 +45,7 @@ function addPokemonData(): void {
 		typesContainer.innerHTML += typeElement;
 	});
 	// Add pokemon image
-	pokedex.innerHTML += `<img src="${currentPokemon.data.img}" alt="pokemon" id="image" />`;
+	pokedex.innerHTML += `<img src="${currentPokemon.data.image}" alt="pokemon" id="image" />`;
 }
 
 // If the window's width reaches a certain threshold, the pokedex image changes.
