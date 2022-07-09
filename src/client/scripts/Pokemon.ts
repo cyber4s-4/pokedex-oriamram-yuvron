@@ -12,6 +12,7 @@ export class Pokemon {
 		this.element.classList.add("card");
 		this.element.addEventListener("click", () => (window.location.href = `pokemon.html?id=${this.data.id}`));
 		this.element.innerHTML = `
+		<i class="star fa-solid fa-star"></i>
         <img src=${this.data.img} />
         <div class="pokemon-title">
             <span class="name">${this.data.name}</span>

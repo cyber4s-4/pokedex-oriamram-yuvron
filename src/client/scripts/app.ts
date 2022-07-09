@@ -19,7 +19,9 @@ const pokemonsCollectiveMethods = {
 };
 
 const filters: string[] = [];
-let searchTerm = "";
+let currentStarPokemon: Pokemon;
+let currentStar: HTMLElement;
+let lastSort: ["id" | "name", "ascending" | "descending"] = ["id", "ascending"];
 
 loadPage();
 
@@ -35,6 +37,8 @@ async function loadPage(): Promise<void> {
 	initializeEventListeners();
 	loader.classList.remove("active");
 	pokemonsCollectiveMethods.render();
+	initializeStarListeners();
+	starCurrentPokemon();
 }
 
 function initializeEventListeners(): void {
@@ -53,6 +57,7 @@ function initializeEventListeners(): void {
 	const sorter = document.getElementById("sorter") as HTMLSelectElement;
 	sorter.addEventListener("change", () => {
 		const sortRequest = sorter.value.split("-") as ["id" | "name", "ascending" | "descending"];
+		lastSort = sortRequest;
 		sortPokemons(sortRequest[0], sortRequest[1]);
 		pokemonsCollectiveMethods.remove();
 		pokemonsCollectiveMethods.render();
@@ -75,7 +80,7 @@ function initializeEventListeners(): void {
 async function createPokemons(): Promise<void> {
 	const promises = [];
 	for (let i = 0; i < POKEMONS_AMOUNT; i++) {
-		promises.push(getFetch(GET_POKEMON_URL + (i + 1)));
+		promises.push(fetchJson(GET_POKEMON_URL + (i + 1)));
 	}
 	for (let i = 0; i < promises.length; i++) {
 		const pokemonData = await promises[i];
@@ -87,12 +92,18 @@ function applyAllFilters(): void {
 	pokemonsCollectiveMethods.show();
 	filterPokemons();
 	searchPokemons();
+	starCurrentPokemon();
+	initializeStarListeners();
 	checkIfNotFound();
 }
 
 function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descending"): void {
 	const directionNumber = direction === "ascending" ? 1 : -1;
 	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
+	if (currentStarPokemon) {
+		pokemons.splice(pokemons.indexOf(currentStarPokemon), 1);
+		pokemons.unshift(currentStarPokemon);
+	}
 }
 
 function filterPokemons(): void {
@@ -127,7 +138,56 @@ function checkIfNotFound(): void {
 	else notFound.classList.remove("active");
 }
 
+function initializeStarListeners(): void {
+	const stars = [...document.getElementsByClassName("star")];
+	stars.forEach((star, index) =>
+		star.addEventListener("click", (e) => {
+			e.stopPropagation();
+			star.classList.toggle("active");
+			if (currentStar === star) {
+				currentStar = null;
+				deleteStar();
+			} else {
+				if (currentStar) currentStar.classList.remove("active");
+				currentStar = star as HTMLElement;
+				updateStar(pokemons[index]);
+			}
+			sortPokemons(lastSort[0], lastSort[1]);
+			pokemonsCollectiveMethods.remove();
+			pokemonsCollectiveMethods.render();
+			applyAllFilters();
+		})
+	);
+}
+
+function starCurrentPokemon(): void {
+	if (currentStarPokemon) {
+		currentStarPokemon.element.classList.add("star-pokemon");
+		currentStar = currentStarPokemon.element.querySelector(".star") as HTMLElement;
+		currentStar.classList.add("active");
+	}
+}
+function updateStar(pokemon: Pokemon): void {
+	// fetch("/api/star",{
+	// 	method:"POST",
+	// 	headers: {
+	// 		'Accept': 'application/json',
+	// 		'Content-Type': 'application/json'
+	// 	},
+	// 	body: JSON.stringify(pokemon.data)
+	// })
+	pokemon.element.classList.add("star-pokemon");
+	if (currentStarPokemon) currentStarPokemon.element.classList.remove("star-pokemon");
+	currentStarPokemon = pokemon;
+}
+
+function deleteStar(): void {
+	// fetch("/api/star",{method:"DELETE"})
+	currentStarPokemon.element.classList.remove("star-pokemon");
+	currentStarPokemon = null;
+}
+
 // Getting json from fetch
-async function getFetch(url: string): Promise<any> {
+async function fetchJson(url: string): Promise<any> {
 	return await fetch(url).then((res) => res.json());
 }
