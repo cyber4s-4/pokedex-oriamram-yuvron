@@ -3,7 +3,6 @@ import { json } from "body-parser";
 import path from "path";
 import fs from "fs";
 
-const POKEMONS_AMOUNT = 151;
 const POKEMONS_PATH = path.join(__dirname, "../../data/pokemons.json");
 const STAR_PATH = path.join(__dirname, "../../data/star.json");
 const pokemons = JSON.parse(fs.readFileSync(POKEMONS_PATH, "utf8"));
