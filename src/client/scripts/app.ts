@@ -88,7 +88,7 @@ async function createPokemons(): Promise<void> {
 		promises.push(fetchJson(GET_POKEMON_URL + (i + 1)));
 	}
 	for (let i = 0; i < promises.length; i++) {
-		const pokemonData = await promises[i];
+		const pokemonData: PokemonData = await promises[i];
 		pokemons.push(new Pokemon(pokemonData));
 	}
 }
