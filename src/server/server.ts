@@ -33,11 +33,9 @@ app.delete("/api/star", (req: Request, res: Response) => {
 	res.sendStatus(204);
 });
 
-// Handles a request to get the pokemons with the given ID
-app.get("/api/:id", (req: Request, res: Response) => {
-	const id = +req.params.id;
-	if (id < 1 || id > POKEMONS_AMOUNT) res.sendStatus(404);
-	else res.send(JSON.stringify(pokemons[id - 1]));
+// Handles a request to get all the pokemons
+app.get("/api/pokemons", (req: Request, res: Response) => {
+	res.send(JSON.stringify(pokemons));
 });
 
 app.listen(3000, () => console.log("listening on port 3000"));

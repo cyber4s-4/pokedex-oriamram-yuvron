@@ -1,7 +1,7 @@
 import { Utility } from "./utility";
 import { Pokemon, PokemonData } from "./pokemon";
 
-const GET_POKEMON_URL = "/api/";
+const GET_POKEMONS_URL = "/api/pokemons";
 const POKEMONS_AMOUNT = 151;
 const cardsContainer = document.getElementById("cards-container");
 const searchBox = document.getElementById("search-box") as HTMLInputElement;
@@ -83,14 +83,8 @@ function initializeEventListeners(): void {
 
 // Gets all the pokemons from the server and saves them
 async function createPokemons(): Promise<void> {
-	const promises = [];
-	for (let i = 0; i < POKEMONS_AMOUNT; i++) {
-		promises.push(fetchJson(GET_POKEMON_URL + (i + 1)));
-	}
-	for (let i = 0; i < promises.length; i++) {
-		const pokemonData: PokemonData = await promises[i];
-		pokemons.push(new Pokemon(pokemonData));
-	}
+	const serverPokemonsData = await fetchJson(GET_POKEMONS_URL);
+	pokemons = serverPokemonsData.map((pokemonData) => new Pokemon(pokemonData));
 }
 
 // Applying all the filters
