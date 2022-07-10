@@ -1,5 +1,5 @@
 import { Utility } from "./utility";
-import { Pokemon, PokemonData, PokemonSpecs } from "./pokemon";
+import { Pokemon, PokemonData } from "./pokemon";
 
 const GET_POKEMON_URL = "/api/";
 const POKEMONS_AMOUNT = 151;
