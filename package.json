@@ -4,7 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "gulp"
+		"start": "node dist/server/server.js",
+		"dev": "gulp",
+		"deploy": "gulp deploy"
 	},
 	"keywords": [],
 	"author": "",

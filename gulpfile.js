@@ -38,6 +38,12 @@ gulp.task("ts-client", () => gulp.src("src/client/scripts/*.ts").pipe(tsProjectC
 // Webpack task
 gulp.task("webpack", () => webpack(webpackConfig).pipe(uglify()).pipe(gulp.dest("dist/client")));
 
+// Clean js folder
+gulp.task("clean-js", () => gulp.src("dist/client/js", { allowEmpty: true }).pipe(clean()));
+
+// Build ts-client task
+gulp.task("build-ts-client", gulp.series("ts-client", "webpack", "clean-js"));
+
 // Typescript Server task
 gulp.task("ts-server", () => gulp.src("src/server/*.ts").pipe(tsProjectServer()).pipe(gulp.dest("dist/server")));
 
@@ -72,10 +78,28 @@ gulp.task("watch", () => {
 	gulp.watch("src/client/images", gulp.series("images", "browsersyncReload"));
 	gulp.watch("src/client/*.html", gulp.series("html", "browsersyncReload"));
 	gulp.watch("src/client/styles/*.scss", gulp.series("sass"));
-	gulp.watch("src/client/scripts/*.ts", gulp.series("ts-client", "webpack", "browsersyncReload"));
+	gulp.watch("src/client/scripts/*.ts", gulp.series("build-ts-client", "browsersyncReload"));
 	gulp.watch("src/server", gulp.series("ts-server"));
 	gulp.watch("dist/server/server.js", gulp.series("server-restart", "browsersyncReload"));
 });
 
 // Default task
-gulp.task("default", gulp.series("clean", "images", "ts-server", "ts-client", "webpack", "server-start", "sass", "html", "browsersyncServe", "watch"));
+gulp.task("default", gulp.series("clean", "images", "ts-server", "build-ts-client", "server-start", "sass", "html", "browsersyncServe", "watch"));
+
+// Heroku clean files
+gulp.task("heroku-clean", () => {
+	return gulp.src("deploy", { allowEmpty: true }).pipe(clean());
+});
+
+// Heroku copy root files
+gulp.task("heroku-copy-root", () => {
+	return gulp.src(["./package.json", "./package-lock.json"]).pipe(gulp.dest("deploy"));
+});
+
+// Heroku copy dist files
+gulp.task("heroku-copy-dist", () => {
+	return gulp.src("dist/**/*").pipe(gulp.dest("deploy/dist"));
+});
+
+// Deploy
+gulp.task("deploy", gulp.series("heroku-clean", "heroku-copy-root", "heroku-copy-dist"));
