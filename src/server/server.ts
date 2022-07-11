@@ -3,6 +3,7 @@ import { json } from "body-parser";
 import path from "path";
 import fs from "fs";
 
+const PORT = process.env.PORT || 3000;
 const POKEMONS_PATH = path.join(__dirname, "../../data/pokemons.json");
 const STAR_PATH = path.join(__dirname, "../../data/star.json");
 const pokemons = JSON.parse(fs.readFileSync(POKEMONS_PATH, "utf8"));
@@ -37,4 +38,4 @@ app.get("/api/pokemons", (req: Request, res: Response) => {
 	res.send(JSON.stringify(pokemons));
 });
 
-app.listen(3000, () => console.log("listening on port 3000"));
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
