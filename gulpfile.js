@@ -88,7 +88,7 @@ gulp.task("default", gulp.series("clean", "images", "ts-server", "build-ts-clien
 
 // Heroku clean files
 gulp.task("heroku-clean", () => {
-	return gulp.src("deploy", { allowEmpty: true }).pipe(clean());
+	return gulp.src(["deploy/package.json", "deploy/package-lock.json", "deploy/dist"]).pipe(clean());
 });
 
 // Heroku copy root files
