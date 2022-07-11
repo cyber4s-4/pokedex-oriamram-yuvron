@@ -10,6 +10,7 @@ const dataElements = document.querySelectorAll(".pokemon-data");
 const typesContainer = document.querySelector(".types") as HTMLElement;
 const prevPage = document.getElementById("prev-page");
 const nextPage = document.getElementById("next-page");
+const homePage = document.getElementById("home");
 const currentId = +new URLSearchParams(window.location.search).get("id");
 const pokemons: Pokemon[] = Utility.getPokemonsFromLocalStorage();
 const currentPokemon = pokemons.find((pokemon) => pokemon.data.id === currentId);
@@ -22,8 +23,9 @@ function loadPage(): void {
 	onResize();
 	window.onresize = onResize;
 	addPokemonData();
-	prevPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId - 1}`));
-	nextPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId + 1}`));
+	currentId !== 1 ? prevPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId - 1}`)) : prevPage.remove();
+	currentId !== 151 ? nextPage.addEventListener("click", () => (window.location.href = `/pokemon.html?id=${currentId + 1}`)) : nextPage.remove();
+	homePage.addEventListener("click", () => (window.location.href = `/`));
 }
 
 // Fills the page with the current pokemon's data.
