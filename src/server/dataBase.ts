@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 const mongo = require("mongodb");
 const fs = require("fs");
-const uri = "mongodb+srv://oriamram:oriamram123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://user:user123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 const all_pokemons = JSON.parse(fs.readFileSync("../../data/allPokemons.json"));
 let db;

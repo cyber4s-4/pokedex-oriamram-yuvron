@@ -6,10 +6,13 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const mongo = require("mongodb");
 const uri = "mongodb+srv://user:123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
+let db;
+let collection;
 onLoad();
-
 async function onLoad() {
 	await client.connect();
+	db = await client.db("pokedex");
+	collection = await db.collection("all_pokemons");
 }
 const PORT = process.env.PORT || 3000;
 // const POKEMONS_PATH = path.join(__dirname, "../../data/originalPokemons.json");
@@ -43,8 +46,6 @@ app.delete("/api/star", (req: Request, res: Response) => {
 
 // Handles a request to get all the pokemons
 app.get("/api/pokemons", async (req: Request, res: Response) => {
-	const db = await client.db("pokedex");
-	const collection = await db.collection("all_pokemons");
 	res.send(JSON.stringify(await collection.find({}).toArray()));
 });
 
