@@ -17,13 +17,13 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const GET_POKEMON_URL = "https://pokeapi.co/api/v2/pokemon/";
 const POKEMON_IMG_URL = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/";
-const POKEMONS_PATH = path_1.default.join(__dirname, "pokemons.json");
+const ORIGINAL_POKEMONS_PATH = path_1.default.join(__dirname, "originalPokemons.json");
 const POKEMONS_AMOUNT = 151;
 writePokemons();
 function writePokemons() {
     return __awaiter(this, void 0, void 0, function* () {
         const pokemons = yield getAllPokemons();
-        fs_1.default.writeFileSync(POKEMONS_PATH, JSON.stringify(pokemons));
+        fs_1.default.writeFileSync(ORIGINAL_POKEMONS_PATH, JSON.stringify(pokemons));
     });
 }
 function getAllPokemons() {
@@ -46,7 +46,7 @@ function getPokemon(id) {
         const pokemonData = {
             name: pokemon.species.name,
             id: pokemon.id,
-            img: `${POKEMON_IMG_URL + "0".repeat(3 - String(id).length) + id}.png`,
+            image: `${POKEMON_IMG_URL + "0".repeat(3 - String(id).length) + id}.png`,
             specs: pokemonSpecs,
         };
         return pokemonData;
