@@ -2,11 +2,19 @@ import express, { Request, Response } from "express";
 import { json } from "body-parser";
 import path from "path";
 import fs from "fs";
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const mongo = require("mongodb");
+const uri = "mongodb+srv://user:123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri);
+onLoad();
 
+async function onLoad() {
+	await client.connect();
+}
 const PORT = process.env.PORT || 3000;
-const POKEMONS_PATH = path.join(__dirname, "../../data/originalPokemons.json");
+// const POKEMONS_PATH = path.join(__dirname, "../../data/originalPokemons.json");
 const STAR_PATH = path.join(__dirname, "../../data/star.json");
-const pokemons = JSON.parse(fs.readFileSync(POKEMONS_PATH, "utf8"));
+// const pokemons = JSON.parse(fs.readFileSync(POKEMONS_PATH, "utf8"));
 let star = JSON.parse(fs.readFileSync(STAR_PATH, "utf8"));
 
 const app = express();
@@ -34,8 +42,10 @@ app.delete("/api/star", (req: Request, res: Response) => {
 });
 
 // Handles a request to get all the pokemons
-app.get("/api/pokemons", (req: Request, res: Response) => {
-	res.send(JSON.stringify(pokemons));
+app.get("/api/pokemons", async (req: Request, res: Response) => {
+	const db = await client.db("pokedex");
+	const collection = await db.collection("all_pokemons");
+	res.send(JSON.stringify(await collection.find({}).toArray()));
 });
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

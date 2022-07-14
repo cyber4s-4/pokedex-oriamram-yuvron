@@ -6,12 +6,15 @@
 	"scripts": {
 		"start": "node dist/server/server.js",
 		"dev": "gulp",
-		"deploy": "gulp deploy"
+		"deploy": "gulp deploy",
+		"tsc": "tsc ./data/dataBase.ts",
+		"nodemon": "nodemon ./data/dataBase.js"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@types/node": "^18.0.4",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"eslint": "^8.17.0",
@@ -30,6 +33,7 @@
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"gulp-uglify": "^3.0.2",
 		"gulp-webpack": "^1.5.0",
+		"mongodb": "^4.8.0",
 		"sass": "^1.52.2",
 		"typescript": "^4.7.3"
 	}
