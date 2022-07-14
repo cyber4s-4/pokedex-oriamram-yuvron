@@ -3,7 +3,8 @@ import path from "path";
 import { PokemonData } from "./interface";
 
 const ORIGINAL_POKEMONS_PATH = path.join(__dirname, "originalPokemons.json");
-const FUSED_POKEMONS_PATH = path.join(__dirname, "pokemons.json");
+const FUSED_POKEMONS_PATH = path.join(__dirname, "fusedPokemons.json");
+const ALL_POKEMONS_PATH = path.join(__dirname, "allPokemons.json");
 
 const fusedImage = (id1: number, id2: number): string => `https://images.alexonsager.net/pokemon/fused/${id1}/${id1}.${id2}.png`;
 
@@ -12,6 +13,7 @@ const fusedPokemons: PokemonData[] = [];
 
 fuseAllPokemons();
 fs.writeFileSync(FUSED_POKEMONS_PATH, JSON.stringify(fusedPokemons));
+fs.writeFileSync(ALL_POKEMONS_PATH, JSON.stringify(originalPokemons.concat(fusedPokemons)));
 
 function fuseAllPokemons(): void {
 	for (let i = 0; i < originalPokemons.length; i++) {
@@ -36,13 +38,13 @@ function fuseTwoPokemons(pokemon1: PokemonData, pokemon2: PokemonData, newId: nu
 		newTypes.push(pokemon2Types[0] !== newTypes[0] ? pokemon2Types[0] : pokemon2Types[1]);
 	}
 	const fusedPokemon: PokemonData = {
-		id: newId,
 		name: newName,
+		id: newId,
 		image: fusedImage(pokemon1.id, pokemon2.id),
 		specs: {
 			types: newTypes,
-			height: (pokemon1.specs.height + pokemon2.specs.height) / 2,
-			weight: (pokemon1.specs.weight + pokemon2.specs.weight) / 2,
+			height: +((pokemon1.specs.height + pokemon2.specs.height) / 2).toFixed(1),
+			weight: +((pokemon1.specs.weight + pokemon2.specs.weight) / 2).toFixed(1),
 		},
 	};
 	return fusedPokemon;
