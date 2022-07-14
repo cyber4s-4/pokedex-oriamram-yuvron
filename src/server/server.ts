@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 
 const PORT = process.env.PORT || 3000;
-const POKEMONS_PATH = path.join(__dirname, "../../data/pokemons.json");
+const POKEMONS_PATH = path.join(__dirname, "../../data/originalPokemons.json");
 const STAR_PATH = path.join(__dirname, "../../data/star.json");
 const pokemons = JSON.parse(fs.readFileSync(POKEMONS_PATH, "utf8"));
 let star = JSON.parse(fs.readFileSync(STAR_PATH, "utf8"));
