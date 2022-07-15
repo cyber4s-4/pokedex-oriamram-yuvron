@@ -2,9 +2,11 @@ import express, { Request, Response } from "express";
 import { json } from "body-parser";
 import path from "path";
 import fs from "fs";
-const { MongoClient, ServerApiVersion } = require("mongodb");
+import { updateDocument } from "./dataBase";
+import { MongoClient } from "mongodb";
+import { url } from "inspector";
 const mongo = require("mongodb");
-const uri = "mongodb+srv://user:123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://user:user123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 let db;
 let collection;
@@ -46,7 +48,12 @@ app.delete("/api/star", (req: Request, res: Response) => {
 
 // Handles a request to get all the pokemons
 app.get("/api/pokemons", async (req: Request, res: Response) => {
-	res.send(JSON.stringify(await collection.find({}).toArray()));
+	res.json(await collection.find({}).toArray());
+});
+// updates a specific pokemon
+app.post("/api/pokemons/:id", async (req: Request, res: Response) => {
+	await updateDocument(+req.params.id, req.body);
+	res.sendStatus(200);
 });
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

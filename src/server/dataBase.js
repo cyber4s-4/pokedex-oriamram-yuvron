@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,11 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var MongoClient = require("mongodb").MongoClient;
+exports.__esModule = true;
+exports.updateDocument = void 0;
+// const { MongoClient } = require("mongodb");
+var mongodb_1 = require("mongodb");
 var mongo = require("mongodb");
 var fs = require("fs");
-var uri = "mongodb+srv://oriamram:oriamram123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
-var client = new MongoClient(uri);
+var uri = "mongodb+srv://user:user123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
+var client = new mongodb_1.MongoClient(uri);
 var all_pokemons = JSON.parse(fs.readFileSync("data/allPokemons.json"));
 var db;
 var collection;
@@ -53,7 +57,7 @@ function onLoad() {
                     return [4 /*yield*/, create("pokedex", "all_pokemons")];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, addToCollection(collection)];
+                    return [4 /*yield*/, addAllPokemons(collection)];
                 case 3:
                     _a.sent();
                     console.log("done");
@@ -62,16 +66,18 @@ function onLoad() {
         });
     });
 }
-function addToCollection(collection) {
+function addAllPokemons(collection) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, collection.count()];
                 case 1:
-                    if ((_a.sent()) === 0) {
-                        collection.insertMany(all_pokemons);
-                    }
-                    return [2 /*return*/];
+                    if (!((_a.sent()) === 0)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, collection.insertMany(all_pokemons)];
+                case 2:
+                    _a.sent();
+                    _a.label = 3;
+                case 3: return [2 /*return*/];
             }
         });
     });
@@ -80,20 +86,31 @@ function create(dbName, collectionName) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, client.db(dbName)];
-                case 1:
-                    db = _a.sent();
-                    return [4 /*yield*/, db.collection(collectionName)];
-                case 2:
-                    collection = _a.sent();
+                case 0:
+                    db = client.db(dbName);
+                    collection = db.collection(collectionName);
                     return [4 /*yield*/, collection.insertOne({ a: "a" })];
-                case 3:
+                case 1:
                     _a.sent();
                     return [4 /*yield*/, collection.deleteMany({})];
-                case 4:
+                case 2:
                     _a.sent();
                     return [2 /*return*/];
             }
         });
     });
 }
+function updateDocument(id, req) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, collection.updateOne({ id: id }, { $set: { name: req.name, id: req.id, img: req.img, specs: req.specs } })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.updateDocument = updateDocument;
+//needs a tsc

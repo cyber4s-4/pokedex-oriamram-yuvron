@@ -7,8 +7,8 @@
 		"start": "node dist/server/server.js",
 		"dev": "gulp",
 		"deploy": "gulp deploy",
-		"tsc": "tsc ./data/dataBase.ts",
-		"nodemon": "nodemon ./data/dataBase.js"
+		"tsc": "tsc ./src/server/dataBase.ts",
+		"nodemon": "nodemon ./src/server/dataBase.js"
 	},
 	"keywords": [],
 	"author": "",
