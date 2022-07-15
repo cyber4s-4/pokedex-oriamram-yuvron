@@ -1,31 +1,25 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { json } from "body-parser";
 import path from "path";
 import fs from "fs";
-import { updateDocument } from "./dataBase";
-import { MongoClient } from "mongodb";
-import { url } from "inspector";
-const mongo = require("mongodb");
-const uri = "mongodb+srv://user:user123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
-let db;
-let collection;
-onLoad();
-async function onLoad() {
-	await client.connect();
-	db = await client.db("pokedex");
-	collection = await db.collection("all_pokemons");
-}
+import { MongoManager } from "./mongo";
+
 const PORT = process.env.PORT || 3000;
-// const POKEMONS_PATH = path.join(__dirname, "../../data/originalPokemons.json");
 const STAR_PATH = path.join(__dirname, "../../data/star.json");
-// const pokemons = JSON.parse(fs.readFileSync(POKEMONS_PATH, "utf8"));
 let star = JSON.parse(fs.readFileSync(STAR_PATH, "utf8"));
 
+const mongoManager = new MongoManager();
+
 const app = express();
+
 app.use(json());
 // Serves static files
 app.use(express.static(path.join(__dirname, "../client"), { extensions: ["html"] }));
+
+app.use("*", (req: Request, res: Response, next: NextFunction) => {
+	if (mongoManager.isLive()) next();
+	else res.sendStatus(500);
+});
 
 // Handles a request to get the currently starred pokemon
 app.get("/api/star", (req: Request, res: Response) => {
@@ -48,12 +42,7 @@ app.delete("/api/star", (req: Request, res: Response) => {
 
 // Handles a request to get all the pokemons
 app.get("/api/pokemons", async (req: Request, res: Response) => {
-	res.json(await collection.find({}).toArray());
-});
-// updates a specific pokemon
-app.post("/api/pokemons/:id", async (req: Request, res: Response) => {
-	await updateDocument(+req.params.id, req.body);
-	res.sendStatus(200);
+	res.status(200).json(await mongoManager.getAllPokemons());
 });
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
