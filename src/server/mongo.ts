@@ -1,5 +1,6 @@
 import { MongoClient, Db, Collection } from "mongodb";
 import fs from "fs";
+import path from "path";
 
 export class MongoManager {
 	client: MongoClient;
@@ -24,7 +25,8 @@ export class MongoManager {
 
 	async addAllPokemons(): Promise<void> {
 		this.removeAll();
-		const allPokemons = JSON.parse(fs.readFileSync("allPokemons.json", "utf8"));
+		const allPokemonsPath = path.join(__dirname, "../../data/allPokemons.json");
+		const allPokemons = JSON.parse(fs.readFileSync(allPokemonsPath, "utf8"));
 		await this.pokemonsCollection.insertMany(allPokemons);
 	}
 
