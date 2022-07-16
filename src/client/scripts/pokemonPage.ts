@@ -18,7 +18,7 @@ loadPage();
 // Initializes the page.
 async function loadPage(): Promise<void> {
 	const currentId = +new URLSearchParams(window.location.search).get("id");
-	currentPokemon = await fetch(`/api/pokemons/${currentId}`).then((res) => res.json());
+	currentPokemon = await fetch(`/api/pokemon/${currentId}`).then((res) => res.json());
 	onResize();
 	window.onresize = onResize;
 	addPokemonData();

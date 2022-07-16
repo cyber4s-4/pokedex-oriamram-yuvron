@@ -42,7 +42,7 @@ export class MongoManager {
 		return await this.pokemonsCollection.find({}).toArray();
 	}
 
-	async getPokemonsByFilter(searchTerm: string, types: String[], combinedTypes: boolean, sortType: "id" | "name", sortDirection: 1 | -1, start: number): Promise<any[]> {
+	async getPokemonsByFilter(token: string, searchTerm: string, types: String[], combinedTypes: boolean, sortType: "id" | "name", sortDirection: 1 | -1, start: number): Promise<any[]> {
 		const findObject = {
 			$or: [{ name: new RegExp(`.*${searchTerm}.*`, "i") }, { id: +searchTerm }],
 		};
@@ -53,23 +53,34 @@ export class MongoManager {
 				findObject["specs.types"] = { $in: types };
 			}
 		}
-		return await this.pokemonsCollection
+		const matchingPokemons = await this.pokemonsCollection
 			.find(findObject)
 			.sort({
 				[sortType]: sortDirection,
 				_id: 1,
 			})
 			.skip(start)
-			.limit(151)
+			.limit(100)
 			.toArray();
+		if (start === 0) {
+			const filterObject = { searchTerm, types, combinedTypes };
+			const favorites = await this.getUserFavoritePokemons(token, filterObject);
+			favorites.sort((a, b) => (a[sortType] > b[sortType] ? sortDirection * -1 : sortDirection));
+			for (const favorite of favorites) {
+				matchingPokemons.forEach((matchingPokemon, index) => {
+					if (favorite.id === matchingPokemon.id) {
+						matchingPokemons.splice(index, 1);
+					}
+				});
+				matchingPokemons.unshift(favorite);
+			}
+		}
+		matchingPokemons.forEach((pokemon) => delete pokemon["_id"]);
+		return matchingPokemons;
 	}
 
 	async getPokemonById(id: number): Promise<any> {
 		return await this.pokemonsCollection.findOne({ id: id });
-	}
-
-	async updatePokemon(id: number, newData): Promise<void> {
-		await this.pokemonsCollection.updateOne({ id: id }, { $set: { name: newData.name, id: newData.id, image: newData.image, specs: newData.specs } });
 	}
 
 	async createUser(): Promise<string> {
@@ -77,16 +88,30 @@ export class MongoManager {
 		return insertedDocument.insertedId.toString();
 	}
 
-	async getUserFavoritePokemons(token: string): Promise<string[]> {
+	async getUserFavoritePokemons(token: string, filterObject = { searchTerm: "", types: [], combinedTypes: false }): Promise<any[]> {
 		const user = await this.usersCollection.findOne({ _id: new ObjectId(token) });
-		return user.favoritePokemons;
+		const favoritePokemons = [];
+		for (const pokemon of user.favoritePokemons) {
+			if (!(pokemon.name.includes(filterObject.searchTerm) || pokemon.id === +filterObject.searchTerm)) continue;
+			if (filterObject.types.length > 0) {
+				if (filterObject.combinedTypes) {
+					if (!filterObject.types.every((type) => pokemon.specs.types.includes(type))) continue;
+				} else {
+					if (!filterObject.types.some((type) => pokemon.specs.types.includes(type))) continue;
+				}
+			}
+			favoritePokemons.push(pokemon);
+		}
+		return favoritePokemons;
 	}
 
 	async addFavoriteToUser(token: string, pokemonId: number): Promise<void> {
-		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $push: { favoritePokemons: pokemonId } });
+		const pokemon = await this.pokemonsCollection.findOne({ id: pokemonId });
+		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $push: { favoritePokemons: pokemon } });
 	}
 
 	async removeFavoriteFromUser(token: string, pokemonId: number): Promise<void> {
-		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $pull: { favoritePokemons: pokemonId } });
+		const pokemon = await this.pokemonsCollection.findOne({ id: pokemonId });
+		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $pull: { favoritePokemons: pokemon } });
 	}
 }

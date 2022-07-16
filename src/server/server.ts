@@ -21,19 +21,20 @@ app.use("*", (req: Request, res: Response, next: NextFunction) => {
 });
 
 // GET request to get all the pokemons - options are passed in query
-app.get("/api/pokemons", async (req: Request, res: Response) => {
+app.get("/api/pokemons/:token", async (req: Request, res: Response) => {
+	const token = req.params.token;
 	const searchTerm = req.query.searchTerm ? req.query.searchTerm : "";
 	const types = req.query.types ? req.query.types.split(",") : [];
 	const combinedTypes = req.query.combinedTypes ? req.query.combinedTypes === "true" : false;
 	const sortType = req.query.sortType ? req.query.sortType : "id";
 	const sortDirection = req.query.sortDirection ? req.query.sortDirection : 1;
 	const start = req.query.start ? +req.query.start : 0;
-	const pokemons = await mongoManager.getPokemonsByFilter(searchTerm, types, combinedTypes, sortType, sortDirection, start);
+	const pokemons = await mongoManager.getPokemonsByFilter(token, searchTerm, types, combinedTypes, sortType, sortDirection, start);
 	res.json(pokemons);
 });
 
 // Get request to get a pokemon by id
-app.get("/api/pokemons/:id", async (req: Request, res: Response) => {
+app.get("/api/pokemon/:id", async (req: Request, res: Response) => {
 	const id = +req.params.id;
 	const pokemon = await mongoManager.getPokemonById(id);
 	res.json(pokemon);
