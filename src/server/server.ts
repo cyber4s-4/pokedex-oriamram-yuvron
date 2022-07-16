@@ -27,7 +27,7 @@ app.get("/api/pokemons", async (req: Request, res: Response) => {
 	const combinedTypes = req.query.combinedTypes ? req.query.combinedTypes === "true" : false;
 	const sortType = req.query.sortType ? req.query.sortType : "id";
 	const sortDirection = req.query.sortDirection ? req.query.sortDirection : 1;
-	const start = req.query.start ? req.query.start : 0;
+	const start = req.query.start ? +req.query.start : 0;
 	const pokemons = await mongoManager.getPokemonsByFilter(searchTerm, types, combinedTypes, sortType, sortDirection, start);
 	res.json(pokemons);
 });

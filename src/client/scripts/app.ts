@@ -10,6 +10,7 @@ const cardsContainer = document.getElementById("cards-container");
 const searchBox = document.getElementById("search-box") as HTMLInputElement;
 const combinedTypes = document.getElementById("combined-types") as HTMLInputElement;
 const notFound = document.getElementById("not-found");
+const loader = document.getElementById("loader");
 
 let pokemons: Pokemon[] = [];
 
@@ -20,35 +21,34 @@ const pokemonsCollectiveMethods = {
 	hide: (): void => pokemons.forEach((pokemon) => pokemon.hide()),
 };
 
-let myToken: string;
 const filters: string[] = [];
-let favoritePokemons: Pokemon[] = [];
+let favoritePokemons: string[] = [];
 let lastSort: ["id" | "name", "ascending" | "descending"] = ["id", "ascending"];
+let currentPokemonsUrl = GET_POKEMONS_URL;
 
 loadPage();
 
 // Renders all the pokemons, getting the starred pokemon and initializes all the event listeners
 async function loadPage(): Promise<void> {
-	const loader = document.getElementById("loader");
 	loader.classList.add("active");
 	await createPokemons();
+	let token: string;
 	if (localStorage.getItem("token")) {
-		myToken = localStorage.getItem("token");
-		const userFavorites = await fetchJson(GET_FAVORITES_URL.replace("<token>", myToken)).catch((err) => console.log("delete", err));
-		favoritePokemons = userFavorites.map((pokemonId) => pokemons[pokemonId - 1]);
+		token = localStorage.getItem("token");
 	} else {
-		myToken = await fetchText(REGISTER_URL);
-		localStorage.setItem("token", myToken);
+		token = await fetchText(REGISTER_URL);
+		localStorage.setItem("token", token);
 	}
-	GET_FAVORITES_URL = GET_FAVORITES_URL.replace("<token>", myToken);
-	ADD_FAVORITE_URL = ADD_FAVORITE_URL.replace("<token>", myToken);
-	DELETE_FAVORITE_URL = DELETE_FAVORITE_URL.replace("<token>", myToken);
-	sortPokemons(lastSort[0], lastSort[1]);
+	GET_FAVORITES_URL = GET_FAVORITES_URL.replace("<token>", token);
+	ADD_FAVORITE_URL = ADD_FAVORITE_URL.replace("<token>", token);
+	DELETE_FAVORITE_URL = DELETE_FAVORITE_URL.replace("<token>", token);
+	// favoritePokemons = await fetchJson(GET_FAVORITES_URL).catch((err) => console.log("delete", err));
+	// favoritesToTop();
 	initializeEventListeners();
 	loader.classList.remove("active");
 	pokemonsCollectiveMethods.render();
-	initializeStarListeners();
-	markFavoritePokemons();
+	// initializeStarListeners();
+	// markFavoritePokemons();
 }
 
 // Initializes the event listeners of the different buttons in the page
@@ -69,9 +69,6 @@ function initializeEventListeners(): void {
 	sorter.addEventListener("change", () => {
 		const sortRequest = sorter.value.split("-") as ["id" | "name", "ascending" | "descending"];
 		lastSort = sortRequest;
-		sortPokemons(sortRequest[0], sortRequest[1]);
-		pokemonsCollectiveMethods.remove();
-		pokemonsCollectiveMethods.render();
 		applyAllFilters();
 	});
 	// Type filters
@@ -94,90 +91,88 @@ async function createPokemons(): Promise<void> {
 }
 
 // Applying all the filters
-function applyAllFilters(): void {
-	pokemonsCollectiveMethods.show();
+async function applyAllFilters(): Promise<void> {
+	pokemonsCollectiveMethods.remove();
+	notFound.classList.remove("active");
+	loader.classList.add("active");
+	buildUrl();
+	const pokemonsData: PokemonData[] = await fetchJson(currentPokemonsUrl);
+	pokemons = pokemonsData.map((pokemonData) => new Pokemon(pokemonData));
+	// favoritesToTop();
+	loader.classList.remove("active");
+	pokemonsCollectiveMethods.render();
+	checkIfNotFound();
+	// markFavoritePokemons();
+	// initializeStarListeners();
+}
+
+// Builds the url to fetch the pokemons with the right queries
+function buildUrl(): void {
+	currentPokemonsUrl = `${GET_POKEMONS_URL}?start=0&`;
+	sortPokemons(lastSort[0], lastSort[1]);
 	filterPokemons();
 	searchPokemons();
-	markFavoritePokemons();
-	initializeStarListeners();
-	checkIfNotFound();
+	if (currentPokemonsUrl[currentPokemonsUrl.length - 1] === "&") currentPokemonsUrl = currentPokemonsUrl.slice(0, -1);
 }
 
-// Sorts pokemons by given category and order
+// Adds the sort type and sort direction to the url that fetches pokemons
 function sortPokemons(sortType: "id" | "name", direction: "ascending" | "descending"): void {
 	const directionNumber = direction === "ascending" ? 1 : -1;
-	pokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber : directionNumber * -1));
-	if (favoritePokemons.length > 0) {
-		favoritePokemons.sort((a, b) => (a.data[sortType] > b.data[sortType] ? directionNumber * -1 : directionNumber));
-		favoritePokemons.forEach((favoritePokemon) => {
-			pokemons.splice(pokemons.indexOf(favoritePokemon), 1);
-			pokemons.unshift(favoritePokemon);
-		});
-	}
+	currentPokemonsUrl += `sortType=${sortType}&sortDirection=${directionNumber}&`;
 }
 
-// Hides all the pokemons that don't match the filter by type
+// Adds the active filter types and if combined types is checked to the url that fetches pokemons
 function filterPokemons(): void {
-	pokemons.forEach((pokemon) => {
-		if (filters.length > 0) {
-			if (combinedTypes.checked) {
-				if (!filters.every((filter) => pokemon.data.specs.types.includes(filter))) {
-					pokemon.hide();
-				}
-			} else {
-				if (!filters.some((filter) => pokemon.data.specs.types.includes(filter))) {
-					pokemon.hide();
-				}
-			}
-		}
-	});
+	if (filters.length > 0) currentPokemonsUrl += `types=${filters.join(",")}&`;
+	if (combinedTypes.checked) currentPokemonsUrl += "combinedTypes=true&";
 }
 
-// Hides all the pokemons that don't match the search
+// Adds the search term to the url that fetches pokemons
 function searchPokemons(): void {
 	const searchTerm = searchBox.value.toLowerCase();
 	if (!searchTerm) return;
-	pokemons.forEach((pokemon) => {
-		if (!pokemon.data.name.includes(searchTerm) && !String(pokemon.data.id).includes(searchTerm)) {
-			pokemon.hide();
-		}
-	});
+	else currentPokemonsUrl += `searchTerm=${searchTerm}&`;
 }
 
 // Displaying not found message if needed after every filter or search
 function checkIfNotFound(): void {
-	const activePokemons = pokemons.filter((pokemon) => pokemon.isActive);
-	if (activePokemons.length === 0) notFound.classList.add("active");
+	if (pokemons.length === 0) notFound.classList.add("active");
 	else notFound.classList.remove("active");
 }
 
-// Sets the event listeners for the star buttons of each pokemon
-function initializeStarListeners(): void {
-	const stars = [...document.getElementsByClassName("star")];
-	stars.forEach((star, index) =>
-		star.addEventListener("click", (e) => {
-			e.stopPropagation();
-			if (star.classList.contains("active")) {
-				deleteFavoritePokemon(pokemons[index]);
-				favoritePokemons.splice(favoritePokemons.indexOf(pokemons[index]), 1);
-			} else {
-				addFavoritePokemon(pokemons[index]);
-				favoritePokemons.push(pokemons[index]);
-			}
-			star.classList.toggle("active");
-			sortPokemons(lastSort[0], lastSort[1]);
-			pokemonsCollectiveMethods.remove();
-			pokemonsCollectiveMethods.render();
-			applyAllFilters();
-		})
-	);
-}
-
-function markFavoritePokemons(): void {
-	favoritePokemons.forEach((pokemon) => {
-		pokemon.element.querySelector(".star").classList.add("active");
+function favoritesToTop(): void {
+	favoritePokemons.forEach((favorite) => {
+		// if(pokemons.)
 	});
 }
+
+// Sets the event listeners for the star buttons of each pokemon
+// function initializeStarListeners(): void {
+// 	const stars = [...document.getElementsByClassName("star")];
+// 	stars.forEach((star, index) =>
+// 		star.addEventListener("click", (e) => {
+// 			e.stopPropagation();
+// 			if (star.classList.contains("active")) {
+// 				deleteFavoritePokemon(pokemons[index]);
+// 				favoritePokemons.splice(favoritePokemons.indexOf(pokemons[index]), 1);
+// 			} else {
+// 				addFavoritePokemon(pokemons[index]);
+// 				favoritePokemons.push(pokemons[index]);
+// 			}
+// 			star.classList.toggle("active");
+// 			sortPokemons(lastSort[0], lastSort[1]);
+// 			pokemonsCollectiveMethods.remove();
+// 			pokemonsCollectiveMethods.render();
+// 			applyAllFilters();
+// 		})
+// 	);
+// }
+
+// function markFavoritePokemons(): void {
+// 	favoritePokemons.forEach((pokemon) => {
+// 		pokemon.element.querySelector(".star").classList.add("active");
+// 	});
+// }
 
 // Updating the currently starred Pokemon
 function addFavoritePokemon(pokemon: Pokemon): void {
