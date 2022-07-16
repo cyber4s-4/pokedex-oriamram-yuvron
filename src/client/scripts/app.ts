@@ -160,6 +160,7 @@ function initializeStarListeners(): void {
 	);
 }
 
+// Makes the favorite pokemons be visible to the user as favorites
 function markFavoritePokemons(): void {
 	favoritePokemons.forEach((favoritePokemon) => {
 		const matchedPokemon = pokemons.find((pokemon) => pokemon.data.id === favoritePokemon.id);
@@ -191,14 +192,13 @@ async function fetchText(url: string): Promise<any> {
 	return await fetch(url).then((res) => res.text());
 }
 
-// load more pokemons of scroll
-window.onscroll = async () => {
-	if (scrollY >= document.body.scrollHeight - window.innerHeight) {
+// Loads more pokemons when scrolling to bottom
+window.onscroll = async function (): Promise<void> {
+	if (window.innerHeight + window.scrollY + 50 >= document.body.scrollHeight) {
 		buildUrl(pokemons.length);
 		const newPokemons = await fetchJson(currentPokemonsUrl);
 		newPokemons.forEach((pokemon) => {
-			let pokemonObject: Pokemon;
-			pokemonObject = new Pokemon(pokemon);
+			const pokemonObject = new Pokemon(pokemon);
 			pokemonObject.render(cardsContainer);
 			pokemons.push(pokemonObject);
 		});
