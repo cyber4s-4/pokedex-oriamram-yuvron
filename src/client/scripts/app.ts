@@ -1,3 +1,4 @@
+import { writeSync } from "fs";
 import { Pokemon, PokemonData } from "./pokemon";
 
 const GET_POKEMONS_URL = "/api/pokemons";
@@ -107,8 +108,8 @@ async function applyAllFilters(): Promise<void> {
 }
 
 // Builds the url to fetch the pokemons with the right queries
-function buildUrl(): void {
-	currentPokemonsUrl = `${GET_POKEMONS_URL}?start=0&`;
+function buildUrl(start = 0): void {
+	currentPokemonsUrl = `${GET_POKEMONS_URL}?start=${start}&`;
 	sortPokemons(lastSort[0], lastSort[1]);
 	filterPokemons();
 	searchPokemons();
@@ -197,3 +198,16 @@ async function fetchJson(url: string): Promise<any> {
 async function fetchText(url: string): Promise<any> {
 	return await fetch(url).then((res) => res.text());
 }
+
+window.onscroll = async () => {
+	if (scrollY >= document.body.scrollHeight - window.innerHeight) {
+		buildUrl(pokemons.length);
+		const newPokemons = await fetch(currentPokemonsUrl).then((res) => res.json());
+		newPokemons.forEach((pokemon) => {
+			let pokemonObject: Pokemon;
+			pokemonObject = new Pokemon(pokemon);
+			pokemonObject.render(cardsContainer);
+			pokemons.push(pokemonObject);
+		});
+	}
+};
