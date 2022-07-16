@@ -148,6 +148,7 @@ function initializeStarListeners(): void {
 			if (star.classList.contains("active")) {
 				deleteFavoritePokemon(pokemons[index]);
 				favoritePokemons.splice(favoritePokemons.indexOf(pokemons[index].data), 1);
+				cardsContainer.insertBefore(pokemons[index].element, pokemons[index + 1].element);
 			} else {
 				addFavoritePokemon(pokemons[index]);
 				favoritePokemons.push(pokemons[index].data);
