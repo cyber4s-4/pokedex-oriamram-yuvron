@@ -152,6 +152,7 @@ function initializeStarListeners(): void {
 				addFavoritePokemon(pokemons[index]);
 				favoritePokemons.push(pokemons[index].data);
 				pokemons[0].element.before(pokemons[index].element);
+				window.scroll({ top: 0, left: 0, behavior: "smooth" });
 			}
 			star.classList.toggle("active");
 		})
