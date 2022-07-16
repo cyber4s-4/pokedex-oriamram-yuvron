@@ -1,4 +1,3 @@
-import { Utility } from "./utility";
 import { Pokemon, PokemonData } from "./pokemon";
 
 const GET_POKEMONS_URL = "/api/pokemons";
@@ -32,11 +31,7 @@ loadPage();
 async function loadPage(): Promise<void> {
 	const loader = document.getElementById("loader");
 	loader.classList.add("active");
-	if (!localStorage.getItem("pokemons")) {
-		await createPokemons();
-		Utility.addPokemonsToLocalStorage(pokemons);
-	}
-	pokemons = Utility.getPokemonsFromLocalStorage();
+	await createPokemons();
 	if (localStorage.getItem("token")) {
 		myToken = localStorage.getItem("token");
 		const userFavorites = await fetchJson(GET_FAVORITES_URL.replace("<token>", myToken)).catch((err) => console.log("delete", err));
@@ -53,6 +48,7 @@ async function loadPage(): Promise<void> {
 	loader.classList.remove("active");
 	pokemonsCollectiveMethods.render();
 	initializeStarListeners();
+	markFavoritePokemons();
 }
 
 // Initializes the event listeners of the different buttons in the page
@@ -102,6 +98,7 @@ function applyAllFilters(): void {
 	pokemonsCollectiveMethods.show();
 	filterPokemons();
 	searchPokemons();
+	markFavoritePokemons();
 	initializeStarListeners();
 	checkIfNotFound();
 }
@@ -160,8 +157,13 @@ function initializeStarListeners(): void {
 	stars.forEach((star, index) =>
 		star.addEventListener("click", (e) => {
 			e.stopPropagation();
-			if (star.classList.contains("active")) deleteFavoritePokemon(pokemons[index]);
-			else addFavoritePokemon(pokemons[index]);
+			if (star.classList.contains("active")) {
+				deleteFavoritePokemon(pokemons[index]);
+				favoritePokemons.splice(favoritePokemons.indexOf(pokemons[index]), 1);
+			} else {
+				addFavoritePokemon(pokemons[index]);
+				favoritePokemons.push(pokemons[index]);
+			}
 			star.classList.toggle("active");
 			sortPokemons(lastSort[0], lastSort[1]);
 			pokemonsCollectiveMethods.remove();
@@ -169,6 +171,12 @@ function initializeStarListeners(): void {
 			applyAllFilters();
 		})
 	);
+}
+
+function markFavoritePokemons(): void {
+	favoritePokemons.forEach((pokemon) => {
+		pokemon.element.querySelector(".star").classList.add("active");
+	});
 }
 
 // Updating the currently starred Pokemon

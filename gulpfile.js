@@ -56,7 +56,7 @@ gulp.task("server-start", (cb) => {
 // Restart Server task
 gulp.task("server-restart", (cb) => {
 	server.restart();
-	cb();
+	setTimeout(() => cb(), 2500);
 });
 
 // Browser sync tasks

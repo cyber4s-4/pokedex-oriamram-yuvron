@@ -16,6 +16,7 @@ export class MongoManager {
 
 	async connect(): Promise<void> {
 		await this.client.connect();
+		console.log("Database connected");
 		this.db = this.client.db("pokedex");
 		this.pokemonsCollection = this.db.collection("pokemons");
 		this.usersCollection = this.db.collection("users");
@@ -39,6 +40,32 @@ export class MongoManager {
 
 	async getAllPokemons(): Promise<any[]> {
 		return await this.pokemonsCollection.find({}).toArray();
+	}
+
+	async getPokemonsByFilter(searchTerm: string, types: String[], combinedTypes: boolean, sortType: "id" | "name", sortDirection: 1 | -1, start: number): Promise<any[]> {
+		const findObject = {
+			$or: [{ name: new RegExp(`.*${searchTerm}.*`, "i") }, { id: +searchTerm }],
+		};
+		if (types.length > 0) {
+			if (combinedTypes) {
+				findObject["specs.types"] = { $all: types };
+			} else {
+				findObject["specs.types"] = { $in: types };
+			}
+		}
+		return await this.pokemonsCollection
+			.find(findObject)
+			.sort({
+				[sortType]: sortDirection,
+				_id: 1,
+			})
+			.skip(start)
+			.limit(150)
+			.toArray();
+	}
+
+	async getPokemonById(id: number): Promise<any> {
+		return await this.pokemonsCollection.findOne({ id: id });
 	}
 
 	async updatePokemon(id: number, newData): Promise<void> {
