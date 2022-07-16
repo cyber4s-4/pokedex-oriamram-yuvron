@@ -1,4 +1,3 @@
-import { writeSync } from "fs";
 import { Pokemon, PokemonData } from "./pokemon";
 
 const REGISTER_URL = "api/register";
@@ -190,15 +189,17 @@ async function fetchText(url: string): Promise<any> {
 	return await fetch(url).then((res) => res.text());
 }
 
+// load more pokemons of scroll
 window.onscroll = async () => {
 	if (scrollY >= document.body.scrollHeight - window.innerHeight) {
 		buildUrl(pokemons.length);
-		const newPokemons = await fetch(currentPokemonsUrl).then((res) => res.json());
+		const newPokemons = await fetchJson(currentPokemonsUrl);
 		newPokemons.forEach((pokemon) => {
 			let pokemonObject: Pokemon;
 			pokemonObject = new Pokemon(pokemon);
 			pokemonObject.render(cardsContainer);
 			pokemons.push(pokemonObject);
 		});
+		initializeStarListeners();
 	}
 };
