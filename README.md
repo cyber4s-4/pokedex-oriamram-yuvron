@@ -8,7 +8,7 @@ In order to be able to run the application, create an '.env' file in the root fo
 mongoUrl = URL
 ```
 
-The url is already waiting for you (Idan / Dima) in a DM via Slack.
+The url is already waiting for you (Idan / Dima) in a DM via Slack (From Yuval Ron).
 
 ---
 
