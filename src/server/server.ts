@@ -2,6 +2,9 @@ import express, { Request, Response, NextFunction } from "express";
 import { json, text } from "body-parser";
 import path from "path";
 import { MongoManager } from "./mongo";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 const mongoManager = new MongoManager();

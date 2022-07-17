@@ -9,8 +9,7 @@ export class MongoManager {
 	usersCollection: Collection;
 
 	constructor() {
-		const uri = "mongodb+srv://user:user123@pokedex.pdhqb.mongodb.net/?retryWrites=true&w=majority";
-		this.client = new MongoClient(uri);
+		this.client = new MongoClient(process.env.mongoUrl);
 		this.connect();
 	}
 
