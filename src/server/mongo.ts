@@ -17,7 +17,7 @@ export class MongoManager {
 		await this.createTable("pokemons");
 	}
 
-	async createTable(name: string) {
+	async createTable(name: string): Promise<void> {
 		await this.client.query(`CREATE TABLE IF NOT EXISTS ${name} (
 			id INT PRIMARY KEY,
 			name VARCHAR(50) NOT NULL,
@@ -34,36 +34,35 @@ export class MongoManager {
 		// sortType: string,
 		// sortDirection: number,
 		start: number
-	){
-		const strType:string = `["${types[0]}","${types[1]}"]`;
+	) {
+		const strType: string = `["${types[0]}","${types[1]}"]`;
 		let sql = `SELECT * FROM pokemons WHERE (name LIKE '%${searchTerm}%' OR id = ${+searchTerm}) `;
 		if (types.length > 0) {
 			if (combinedTypes) {
 				sql += `AND specs->'types' @> '${strType}' ;`;
-
-			 } else {
-				sql += `AND specs->'types' @>'["${types[0]}"]' OR specs->'types' @>'["${types[1]}"]'`
+			} else {
+				sql += `AND specs->'types' @>'["${types[0]}"]' OR specs->'types' @>'["${types[1]}"]'`;
 			}
 		}
-		
-		const matchingPokemons = (await this.client.query(sql)).rows.slice(start,start+100);
+
+		const matchingPokemons = (await this.client.query(sql)).rows.slice(start, start + 100);
 		console.log(matchingPokemons);
-	// 	if (start === 0) {
-	// 		const filterObject = { searchTerm, types, combinedTypes };
-	// 		const favorites = await this.getUserFavoritePokemons(token, filterObject);
-	// 		favorites.sort((a, b) => (a[sortType] > b[sortType] ? sortDirection * -1 : sortDirection));
-	// 		for (const favorite of favorites) {
-	// 			matchingPokemons.forEach((matchingPokemon, index) => {
-	// 				if (favorite.id === matchingPokemon.id) {
-	// 					matchingPokemons.splice(index, 1);
-	// 				}
-	// 			});
-	// 			matchingPokemons.unshift(favorite);
-	// 		}
-	// 	}
-	// 	matchingPokemons.forEach((pokemon) => delete pokemon["_id"]);
-	// 	return matchingPokemons;
-	// }
+		// 	if (start === 0) {
+		// 		const filterObject = { searchTerm, types, combinedTypes };
+		// 		const favorites = await this.getUserFavoritePokemons(token, filterObject);
+		// 		favorites.sort((a, b) => (a[sortType] > b[sortType] ? sortDirection * -1 : sortDirection));
+		// 		for (const favorite of favorites) {
+		// 			matchingPokemons.forEach((matchingPokemon, index) => {
+		// 				if (favorite.id === matchingPokemon.id) {
+		// 					matchingPokemons.splice(index, 1);
+		// 				}
+		// 			});
+		// 			matchingPokemons.unshift(favorite);
+		// 		}
+		// 	}
+		// 	matchingPokemons.forEach((pokemon) => delete pokemon["_id"]);
+		// 	return matchingPokemons;
+	}
 
 	// async getPokemonById(id: number): Promise<any> {
 	// 	return (await this.client.query(`SELECT * FROM pokemons WHERE id = ${id}`)).rows[0];
@@ -108,5 +107,30 @@ export class MongoManager {
 	// 		});
 	// 		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $pull: { favoritePokemons: pokemon } });
 	// 	}
+
+	async createUsersTable(): Promise<void> {
+		await this.client.query(`CREATE TABLE IF NOT EXISTS users (
+			id SERIAL PRIMARY KEY,
+			token TEXT NOT NULL
+			favorite_pokemons  INTEGER ARRAY DEFAULT []
+		)`);
 	}
+
+	async createUser(token: string): Promise<void> {
+		await this.client.query(`INSERT INTO users (token) VALUES (${token})`);
+	}
+
+	async addFavoriteToUser(token: string, pokemonId: number): Promise<void> {
+		const sql = `UPDATE users
+		SET favorite_pokemons = ARRAY_APPEND(favorite_pokemons, ${pokemonId})
+		WHERE token = '${token}'`;
+		await this.client.query(sql);
+	}
+
+	// 	async removeFavoriteFromUser(token: string, pokemonId: number): Promise<void> {
+	// 		const pokemon = await this.pokemonsCollection.findOne({
+	// 			id: pokemonId,
+	// 		});
+	// 		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $pull: { favoritePokemons: pokemon } });
+	// 	}
 }
