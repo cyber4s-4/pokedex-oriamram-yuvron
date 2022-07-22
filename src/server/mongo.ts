@@ -41,7 +41,7 @@ export class MongoManager {
 		return await this.pokemonsCollection.find({}).toArray();
 	}
 
-	async getPokemonsByFilter(token: string, searchTerm: string, types: String[], combinedTypes: boolean, sortType: "id" | "name", sortDirection: 1 | -1, start: number): Promise<any[]> {
+	async getPokemonsByFilter(token: string, searchTerm: string, types: String[], combinedTypes: boolean, sortType: string, sortDirection: number, start: number): Promise<any[]> {
 		const findObject = {
 			$or: [{ name: new RegExp(`.*${searchTerm}.*`, "i") }, { id: +searchTerm }],
 		};
@@ -54,10 +54,10 @@ export class MongoManager {
 		}
 		const matchingPokemons = await this.pokemonsCollection
 			.find(findObject)
-			.sort({
-				[sortType]: sortDirection,
-				_id: 1,
-			})
+			// .sort({
+			// 	[sortType]: sortDirection,
+			// 	_id: 1,
+			// })
 			.skip(start)
 			.limit(100)
 			.toArray();

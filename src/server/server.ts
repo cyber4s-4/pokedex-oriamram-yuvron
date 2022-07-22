@@ -4,10 +4,13 @@ import path from "path";
 import { MongoManager } from "./mongo";
 import dotenv from "dotenv";
 
+console.log("A");
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
+console.log(1);
 const mongoManager = new MongoManager();
+console.log(2);
 const app = express();
 
 app.use(text());
@@ -26,11 +29,28 @@ app.use("*", (req: Request, res: Response, next: NextFunction) => {
 // GET request to get all the pokemons - options are passed in query
 app.get("/api/pokemons/:token", async (req: Request, res: Response) => {
 	const token = req.params.token;
-	const searchTerm = req.query.searchTerm ? req.query.searchTerm : "";
-	const types = req.query.types ? req.query.types.split(",") : [];
-	const combinedTypes = req.query.combinedTypes ? req.query.combinedTypes === "true" : false;
-	const sortType = req.query.sortType ? req.query.sortType : "id";
-	const sortDirection = req.query.sortDirection ? req.query.sortDirection : 1;
+	let searchTerm = "";
+	if (req.query.searchTerm) {
+		if (Array.isArray(req.query.searchTerm)) searchTerm = req.query.searchTerm.join("");
+		else searchTerm = req.query.searchTerm as string;
+	}
+	let types = [];
+	if (req.query.types) {
+		if (typeof req.query.types === "string") types = [req.query.types];
+		else types = req.query.types as string[];
+	}
+	const combinedTypes = req.query.combinedTypes === "true";
+	let sortType = "id";
+	if (req.query.sortType) {
+		if (Array.isArray(req.query.sortType)) sortType = req.query.sortType.join("");
+		else sortType = req.query.sortType as string;
+		if (sortType !== "id" && sortType !== "name") sortType = "id";
+	}
+	let sortDirection = 1;
+	if (req.query.sortDirection && !Array.isArray(req.query.sortDirection)) {
+		sortDirection = +(req.query.sortDirection as string);
+		if (sortDirection !== 1 && sortDirection !== -1) sortDirection = 1;
+	}
 	const start = req.query.start ? +req.query.start : 0;
 	const pokemons = await mongoManager.getPokemonsByFilter(token, searchTerm, types, combinedTypes, sortType, sortDirection, start);
 	res.json(pokemons);
