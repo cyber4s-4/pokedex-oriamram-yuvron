@@ -16,13 +16,13 @@ async function addAllPokemons() {
 	// await db.client.query(sql, pokemonValues.flat());
 	console.log("SQL: INSERT INTO pokemons");
 	// console.log(await db.getPokemonById(2));
-	// console.log((await db.client.query(`SELECT * FROM pokemons WHERE specs->'types' @>'["grass"]'`)).rows[0]);
+	console.log((await db.client.query(`SELECT * FROM pokemons WHERE specs->'types' @>'["grass","fire"]'`)).rows);
 }
 db.init()
-	.then(async () =>{
-		await db.getPokemonsByFilter('',["grass","poison"],false,0)
-			db.client.end();
-		})
+	.then(async () => {
+		// await db.getPokemonsByFilter("", ["grass", "poison"], false, 0);
+		addAllPokemons().then(() => db.client.end());
+	})
 	.catch((err) => {
 		console.log(err.message);
 		db.client.end();

@@ -1,6 +1,4 @@
 import { Client } from "pg";
-import fs from "fs";
-import path, { format } from "path";
 
 export class MongoManager {
 	client: Client;
