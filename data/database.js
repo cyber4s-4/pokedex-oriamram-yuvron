@@ -4,7 +4,6 @@ const path = require("path");
 const dotenv = require("dotenv").config();
 const db = new MongoManager();
 async function addAllPokemons() {
-	console.log("a");
 	const allPokemonsPath = path.join(__dirname, "allPokemons.json");
 	const allPokemons = JSON.parse(fs.readFileSync(allPokemonsPath, "utf8")).slice(0, 8000);
 	let sql = `INSERT INTO pokemons (name, id, img, specs) VALUES `;
@@ -17,15 +16,13 @@ async function addAllPokemons() {
 	// await db.client.query(sql, pokemonValues.flat());
 	console.log("SQL: INSERT INTO pokemons");
 	// console.log(await db.getPokemonById(2));
-	console.log((await db.client.query(`SELECT * FROM pokemons WHERE tags::jsonb = '[ "grass", "poison" ]'::jsonb`)).rows);
+	// console.log((await db.client.query(`SELECT * FROM pokemons WHERE specs->'types' @>'["grass"]'`)).rows[0]);
 }
 db.init()
-	.then(() =>
-		addAllPokemons().then(() => {
-			console.log("kaka");
+	.then(async () =>{
+		await db.getPokemonsByFilter('',["grass","poison"],false,0)
 			db.client.end();
 		})
-	)
 	.catch((err) => {
 		console.log(err.message);
 		db.client.end();

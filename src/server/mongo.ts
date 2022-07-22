@@ -1,4 +1,3 @@
-// import { MongoClient, Db, Collection, ObjectId } from "mongodb";
 import { Client } from "pg";
 import fs from "fs";
 import path, { format } from "path";
@@ -23,60 +22,52 @@ export class MongoManager {
 			id INT PRIMARY KEY,
 			name VARCHAR(50) NOT NULL,
 			img TEXT NOT NULL,
-			specs JSON NOT NULL
+			specs JSONB NOT NULL
 		)`);
 	}
 
 	async getPokemonsByFilter(
-		token: string,
+		// token: string,
 		searchTerm: string,
 		types: String[],
 		combinedTypes: boolean,
-		sortType: string,
-		sortDirection: number,
+		// sortType: string,
+		// sortDirection: number,
 		start: number
-	): Promise<any[]> {
-		// const findObject = {
-		// 	$or: [{ name: new RegExp(`.*${searchTerm}.*`, "i") }, { id: +searchTerm }],
-		// };
+	){
+		const strType:string = `["${types[0]}","${types[1]}"]`;
 		let sql = `SELECT * FROM pokemons WHERE (name LIKE '%${searchTerm}%' OR id = ${+searchTerm}) `;
 		if (types.length > 0) {
 			if (combinedTypes) {
-				// findObject["specs.types"] = { $all: types };
-				sql += `AND `;
-			} else {
-				findObject["specs.types"] = { $in: types };
-			}
-		}
-		const matchingPokemons = await this.pokemonsCollection
-			.find(findObject)
-			// .sort({
-			// 	[sortType]: sortDirection,
-			// 	_id: 1,
-			// })
-			.skip(start)
-			.limit(100)
-			.toArray();
-		if (start === 0) {
-			const filterObject = { searchTerm, types, combinedTypes };
-			const favorites = await this.getUserFavoritePokemons(token, filterObject);
-			favorites.sort((a, b) => (a[sortType] > b[sortType] ? sortDirection * -1 : sortDirection));
-			for (const favorite of favorites) {
-				matchingPokemons.forEach((matchingPokemon, index) => {
-					if (favorite.id === matchingPokemon.id) {
-						matchingPokemons.splice(index, 1);
-					}
-				});
-				matchingPokemons.unshift(favorite);
-			}
-		}
-		matchingPokemons.forEach((pokemon) => delete pokemon["_id"]);
-		return matchingPokemons;
-	}
+				sql += `AND specs->'types' @> '${strType}' ;`;
 
-	async getPokemonById(id: number): Promise<any> {
-		return (await this.client.query(`SELECT * FROM pokemons WHERE id = ${id}`)).rows[0];
-	}
+			 } else {
+				sql += `AND specs->'types' @>'["${types[0]}"]' OR specs->'types' @>'["${types[1]}"]'`
+			}
+		}
+		
+		const matchingPokemons = (await this.client.query(sql)).rows.slice(start,start+100);
+		console.log(matchingPokemons);
+	// 	if (start === 0) {
+	// 		const filterObject = { searchTerm, types, combinedTypes };
+	// 		const favorites = await this.getUserFavoritePokemons(token, filterObject);
+	// 		favorites.sort((a, b) => (a[sortType] > b[sortType] ? sortDirection * -1 : sortDirection));
+	// 		for (const favorite of favorites) {
+	// 			matchingPokemons.forEach((matchingPokemon, index) => {
+	// 				if (favorite.id === matchingPokemon.id) {
+	// 					matchingPokemons.splice(index, 1);
+	// 				}
+	// 			});
+	// 			matchingPokemons.unshift(favorite);
+	// 		}
+	// 	}
+	// 	matchingPokemons.forEach((pokemon) => delete pokemon["_id"]);
+	// 	return matchingPokemons;
+	// }
+
+	// async getPokemonById(id: number): Promise<any> {
+	// 	return (await this.client.query(`SELECT * FROM pokemons WHERE id = ${id}`)).rows[0];
+	// }
 
 	// async createUser(): Promise<string> {
 	// 	const insertedDocument = await this.usersCollection.insertOne({
@@ -117,4 +108,5 @@ export class MongoManager {
 	// 		});
 	// 		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $pull: { favoritePokemons: pokemon } });
 	// 	}
+	}
 }
