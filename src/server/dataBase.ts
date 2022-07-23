@@ -7,18 +7,8 @@ export class DbManager {
 		this.client = new Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 	}
 
-	async init(): Promise<void> {
+	async connect(): Promise<void> {
 		await this.client.connect();
-		await this.createTable("pokemons");
-	}
-
-	async createTable(name: string): Promise<void> {
-		await this.client.query(`CREATE TABLE IF NOT EXISTS ${name} (
-			id INT PRIMARY KEY,
-			name VARCHAR(50) NOT NULL,
-			img TEXT NOT NULL,
-			specs JSONB NOT NULL
-		)`);
 	}
 
 	async getPokemonsByFilter(token: string, searchTerm: string, types: string[], combinedTypes: boolean, sortType: string, sortDirection: number, start: number): Promise<any[]> {
@@ -36,18 +26,19 @@ export class DbManager {
 				sql += `AND (${stringifiedTypes} @> (specs->'types')[0] OR ${stringifiedTypes} @> (specs->'types')[1]) `;
 			}
 		}
-		sql += `ORDER BY "${sortType}" ${sortDirection === 1 ? "ASC" : "DESC"}
-		OFFSET ${start} LIMIT 100`;
-		let matchingPokemons = (await this.client.query(sql)).rows.slice(start, start + 100);
+		sql += `ORDER BY "${sortType}" ${sortDirection === 1 ? "ASC" : "DESC"} OFFSET ${start} LIMIT 100`;
+		let matchingPokemons = (await this.client.query(sql)).rows;
 		if (start === 0) {
 			const favoritePokemons = await this.getUserFavoritePokemons(token);
 			const filteredFavoritePokemons = favoritePokemons.filter((pokemon) => {
 				const checkSearchTerm = pokemon.name.includes(searchTerm) || pokemon.id === +searchTerm;
-				let checkTypes: boolean;
-				if (combinedTypes) {
-					checkTypes = pokemon.specs.types.every((type) => types.includes(type));
-				} else {
-					checkTypes = pokemon.specs.types.some((type) => types.includes(type));
+				let checkTypes = true;
+				if (types.length > 0) {
+					if (combinedTypes) {
+						checkTypes = pokemon.specs.types.every((type) => types.includes(type));
+					} else {
+						checkTypes = pokemon.specs.types.some((type) => types.includes(type));
+					}
 				}
 				return checkSearchTerm && checkTypes;
 			});
@@ -55,7 +46,7 @@ export class DbManager {
 			for (const favoritePokemon of filteredFavoritePokemons) {
 				for (const matchingPokemon of matchingPokemons) {
 					if (matchingPokemon.id === favoritePokemon.id) {
-						matchingPokemons.splice(matchingPokemon.indexOf(matchingPokemon), 1);
+						matchingPokemons.splice(matchingPokemons.indexOf(matchingPokemon), 1);
 						break;
 					}
 				}

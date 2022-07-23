@@ -101,10 +101,5 @@ gulp.task("heroku-copy-dist", () => {
 	return gulp.src("dist/**/*").pipe(gulp.dest("deploy/dist"));
 });
 
-// Heroku copy data
-gulp.task("heroku-copy-data", () => {
-	return gulp.src("data/*").pipe(gulp.dest("deploy/data"));
-});
-
 // Deploy
-gulp.task("deploy", gulp.series("heroku-clean", "heroku-copy-root", "heroku-copy-dist", "heroku-copy-data"));
+gulp.task("deploy", gulp.series("heroku-clean", "heroku-copy-root", "heroku-copy-dist"));

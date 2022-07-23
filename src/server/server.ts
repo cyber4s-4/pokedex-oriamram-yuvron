@@ -1,20 +1,23 @@
 import express, { Request, Response, NextFunction } from "express";
-// import { json, text } from "body-parser";
-// import path from "path";
-import { MongoManager } from "./dataBase";
+import { json, text } from "body-parser";
+import path from "path";
+import { DbManager } from "./database";
 import dotenv from "dotenv";
-// import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-const db = new DataBase();
 const app = express();
+const db = new DbManager();
+db.connect().then(() => {
+	app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+});
 
 app.use(text());
 app.use(json());
 
-//Serves static files
+// Serves static files
 app.use(express.static(path.join(__dirname, "../client"), { extensions: ["html"] }));
 
 // Middleware to log the requested URL and send a server error if database is not connected
@@ -32,10 +35,7 @@ app.get("/api/pokemons/:token", async (req: Request, res: Response) => {
 		else searchTerm = req.query.searchTerm as string;
 	}
 	let types = [];
-	if (req.query.types) {
-		if (typeof req.query.types === "string") types = [req.query.types];
-		else types = req.query.types as string[];
-	}
+	if (req.query.types) types = (req.query.types as string).split(",");
 	const combinedTypes = req.query.combinedTypes === "true";
 	let sortType = "id";
 	if (req.query.sortType) {
@@ -62,8 +62,16 @@ app.get("/api/pokemon/:id", async (req: Request, res: Response) => {
 
 // GET request to create a new user and receive a token
 app.get("/api/register", async (req: Request, res: Response) => {
-	const newToken = await db.createUser();
-	res.send(newToken);
+	const newToken = uuidv4();
+	db.createUser(newToken)
+		.then(() => {
+			console.log("User Created");
+			res.send(newToken);
+		})
+		.catch((err) => {
+			console.log(err.message);
+			res.status(500).send(err.message);
+		});
 });
 
 // GET request to get the user's current favorite pokemons
@@ -89,5 +97,3 @@ app.delete("/api/favorites/:token/:pokemonId", async (req: Request, res: Respons
 	await db.removeFavoriteFromUser(token, pokemonId);
 	res.sendStatus(204);
 });
-
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

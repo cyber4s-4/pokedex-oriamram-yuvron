@@ -43,6 +43,7 @@ async function loadPage(): Promise<void> {
 	ADD_FAVORITE_URL = ADD_FAVORITE_URL.replace("<token>", token);
 	DELETE_FAVORITE_URL = DELETE_FAVORITE_URL.replace("<token>", token);
 	await createPokemons();
+	console.log(pokemons);
 	initializeEventListeners();
 	loader.classList.remove("active");
 	pokemonsCollectiveMethods.render();
@@ -194,9 +195,12 @@ async function fetchText(url: string): Promise<any> {
 
 // Loads more pokemons when scrolling to bottom
 window.onscroll = async function (): Promise<void> {
-	if (window.innerHeight + window.scrollY + 50 >= document.body.scrollHeight) {
+	if (!loader.classList.contains("active") && window.innerHeight + window.scrollY + 50 >= document.body.scrollHeight) {
+		loader.classList.add("active");
+		window.scroll({ top: document.body.scrollHeight, left: 0, behavior: "smooth" });
 		buildUrl(pokemons.length);
 		const newPokemons = await fetchJson(currentPokemonsUrl);
+		loader.classList.remove("active");
 		newPokemons.forEach((pokemon) => {
 			const pokemonObject = new Pokemon(pokemon);
 			pokemonObject.render(cardsContainer);
