@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv").config();
 
-const db = new DataBase();
+// const db = new DataBase();
 
 async function addAllPokemons() {
 	// const allPokemonsPath = path.join(__dirname, "allPokemons.json");
@@ -22,25 +22,31 @@ async function addAllPokemons() {
 	console.log((await db.client.query(`SELECT * FROM pokemons WHERE id = 1`)).rows);
 }
 
-db.init()
-	.then(async () => {
-		// await db.getPokemonsByFilter("", ["grass", "poison"], false, 0);
-		// addAllPokemons().then(() => db.client.end());
-		await db.createUsersTable();
-		console.log("TABKE CREATED");
-		// await db.createUser("aaa");
-		// console.log(await db.client.query("SELECT * FROM users where token = 'aaa'").rows);
-		// await db.addFavoriteToUser("aaa", 2);
-		// console.log("ADDED");
-		// console.log(await db.getUserFavoritePokemons("aaa"));
-		await db.removeFavoriteFromUser("aaa", 1);
-		console.log("REMOVED");
-		console.log(await db.getUserFavoritePokemons("aaa"));
-		console.log("CT");
-		db.client.end();
-	})
-	.catch((err) => {
-		console.log("CAUGHT");
-		console.log(err.message);
-		db.client.end();
-	});
+// db.init()
+// 	.then(async () => {
+// 		// await db.getPokemonsByFilter("", ["grass", "poison"], false, 0);
+// 		// addAllPokemons().then(() => db.client.end());
+// 		await db.createUsersTable();
+// 		console.log("TABKE CREATED");
+// 		// await db.createUser("aaa");
+// 		// console.log(await db.client.query("SELECT * FROM users where token = 'aaa'").rows);
+// 		// await db.addFavoriteToUser("aaa", 2);
+// 		// console.log("ADDED");
+// 		// console.log(await db.getUserFavoritePokemons("aaa"));
+// 		await db.removeFavoriteFromUser("aaa", 1);
+// 		console.log("REMOVED");
+// 		console.log(await db.getUserFavoritePokemons("aaa"));
+// 		console.log("CT");
+// 		db.client.end();
+// 	})
+// 	.catch((err) => {
+// 		console.log("CAUGHT");
+// 		console.log(err.message);
+// 		db.client.end();
+// 	});
+
+const arr = [1, 2, 3, 4];
+for (const i of arr) {
+	console.log(`INDEX: ${i}`);
+	if (i === 2) arr.splice(arr.indexOf(i), 1);
+}
