@@ -1,17 +1,14 @@
-// import express, { Request, Response, NextFunction } from "express";
-// import { json, text } from "body-parser";
-// import path from "path";
-// import { MongoManager } from "./mongo";
-// import dotenv from "dotenv";
+import express, { Request, Response, NextFunction } from "express";
+import { json, text } from "body-parser";
+import path from "path";
+import { DataBase } from "./dataBase";
+import dotenv from "dotenv";
 
-// console.log("A");
-// dotenv.config();
+dotenv.config();
 
-// const PORT = process.env.PORT || 3000;
-// console.log(1);
-// const mongoManager = new MongoManager();
-// console.log(2);
-// const app = express();
+const PORT = process.env.PORT || 3000;
+const mongoManager = new DataBase();
+const app = express();
 
 // app.use(text());
 // app.use(json());

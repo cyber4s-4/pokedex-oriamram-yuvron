@@ -1,11 +1,12 @@
+import e from "express";
 import { Client } from "pg";
 
-export class MongoManager {
+export class DataBase {
 	client: Client;
 	db;
 	// pokemonsCollection: Collection;
 	// usersCollection: Collection;
-
+	//
 	constructor() {
 		this.client = new Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 	}
@@ -27,27 +28,41 @@ export class MongoManager {
 	async getPokemonsByFilter(
 		// token: string,
 		searchTerm: string,
-		types: String[],
+		types: string[],
 		combinedTypes: boolean,
 		// sortType: string,
 		// sortDirection: number,
 		start: number
 	) {
-		const strType: string = `["${types[0]}","${types[1]}"]`;
-		let sql = `SELECT * FROM pokemons WHERE (name LIKE '%${searchTerm}%' OR id = ${+searchTerm}) `;
+		const strType: string =
+			`'[` +
+			types
+				.map((type) => {
+					return `"` + type + `"`;
+				})
+				.join(",") +
+			`]'`;
+
+		let sql = `SELECT * FROM pokemons WHERE `;
+
+		if (!isNaN(+searchTerm)) {
+			sql += `(name LIKE '%${searchTerm}%' OR id = ${+searchTerm}) `;
+		} else {
+			sql += `name LIKE '%${searchTerm}%' `;
+		}
+
 		if (types.length > 0) {
 			if (combinedTypes) {
-				sql += `AND specs->'types' @> '${strType}' ;`;
+				sql += ` AND specs->'types' @> ${strType} `;
 			} else {
-				sql += `AND specs->'types' @>'["${types[0]}"]' OR specs->'types' @>'["${types[1]}"]'`;
+				sql += ` AND (${strType} @> (specs->'types')[0] OR ${strType} @> (specs->'types')[1]) `;
 			}
 		}
 
 		const matchingPokemons = (await this.client.query(sql)).rows.slice(start, start + 100);
-		console.log(matchingPokemons);
-		// 	if (start === 0) {
-		// 		const filterObject = { searchTerm, types, combinedTypes };
-		// 		const favorites = await this.getUserFavoritePokemons(token, filterObject);
+		// if (start === 0) {
+		// 	const filterObject = { searchTerm, types, combinedTypes };
+		// const favorites = await this.getUserFavoritePokemons(token, filterObject);
 		// 		favorites.sort((a, b) => (a[sortType] > b[sortType] ? sortDirection * -1 : sortDirection));
 		// 		for (const favorite of favorites) {
 		// 			matchingPokemons.forEach((matchingPokemon, index) => {
