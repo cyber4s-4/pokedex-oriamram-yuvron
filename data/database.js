@@ -2,6 +2,7 @@ const { DataBase } = require("../dist/server/dataBase.js");
 const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv").config();
+
 const db = new DataBase();
 
 async function addAllPokemons() {
@@ -20,13 +21,26 @@ async function addAllPokemons() {
 	// console.log((await db.client.query(`SELECT * FROM pokemons WHERE specs->'types' @>'["grass","fire"]'`)).rows);
 	console.log((await db.client.query(`SELECT * FROM pokemons WHERE id = 1`)).rows);
 }
+
 db.init()
 	.then(async () => {
-		await db.getPokemonsByFilter("c", ["grass", "fire"], true, 0);
-		db.client.end();
+		// await db.getPokemonsByFilter("", ["grass", "poison"], false, 0);
 		// addAllPokemons().then(() => db.client.end());
+		await db.createUsersTable();
+		console.log("TABKE CREATED");
+		// await db.createUser("aaa");
+		// console.log(await db.client.query("SELECT * FROM users where token = 'aaa'").rows);
+		// await db.addFavoriteToUser("aaa", 2);
+		// console.log("ADDED");
+		// console.log(await db.getUserFavoritePokemons("aaa"));
+		await db.removeFavoriteFromUser("aaa", 1);
+		console.log("REMOVED");
+		console.log(await db.getUserFavoritePokemons("aaa"));
+		console.log("CT");
+		db.client.end();
 	})
 	.catch((err) => {
+		console.log("CAUGHT");
 		console.log(err.message);
 		db.client.end();
 	});

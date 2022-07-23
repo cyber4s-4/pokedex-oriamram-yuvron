@@ -77,16 +77,9 @@ export class DataBase {
 		// 	return matchingPokemons;
 	}
 
-	// async getPokemonById(id: number): Promise<any> {
-	// 	return (await this.client.query(`SELECT * FROM pokemons WHERE id = ${id}`)).rows[0];
-	// }
-
-	// async createUser(): Promise<string> {
-	// 	const insertedDocument = await this.usersCollection.insertOne({
-	// 		favoritePokemons: [],
-	// 	});
-	// 	return insertedDocument.insertedId.toString();
-	// }
+	async getPokemonById(id: number): Promise<any> {
+		return (await this.client.query(`SELECT * FROM pokemons WHERE id = ${id}`)).rows[0];
+	}
 
 	// 	async getUserFavoritePokemons(token: string, filterObject = { searchTerm: "", types: [], combinedTypes: false }): Promise<any[]> {
 	// 		const user = await this.usersCollection.findOne({
@@ -107,43 +100,38 @@ export class DataBase {
 	// 		return favoritePokemons;
 	// 	}
 
-	// 	async addFavoriteToUser(token: string, pokemonId: number): Promise<void> {
-	// 		const pokemon = await this.pokemonsCollection.findOne({
-	// 			id: pokemonId,
-	// 		});
-	// 		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $push: { favoritePokemons: pokemon } });
-	// 	}
-
-	// 	async removeFavoriteFromUser(token: string, pokemonId: number): Promise<void> {
-	// 		const pokemon = await this.pokemonsCollection.findOne({
-	// 			id: pokemonId,
-	// 		});
-	// 		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $pull: { favoritePokemons: pokemon } });
-	// 	}
-
 	async createUsersTable(): Promise<void> {
 		await this.client.query(`CREATE TABLE IF NOT EXISTS users (
 			id SERIAL PRIMARY KEY,
-			token TEXT NOT NULL
-			favorite_pokemons  INTEGER ARRAY DEFAULT []
+			token TEXT NOT NULL,
+			favorite_pokemons JSONB ARRAY DEFAULT '{}'
 		)`);
 	}
 
 	async createUser(token: string): Promise<void> {
-		await this.client.query(`INSERT INTO users (token) VALUES (${token})`);
+		await this.client.query(`INSERT INTO users (token) VALUES ('${token}')`);
+	}
+
+	async getUserFavoritePokemons(token: string): Promise<any> {
+		const sql = `SELECT favorite_pokemons
+		FROM users
+		WHERE token = '${token}'`;
+		return (await this.client.query(sql)).rows[0]["favorite_pokemons"];
 	}
 
 	async addFavoriteToUser(token: string, pokemonId: number): Promise<void> {
+		const pokemonJson = await this.getPokemonById(pokemonId);
 		const sql = `UPDATE users
-		SET favorite_pokemons = ARRAY_APPEND(favorite_pokemons, ${pokemonId})
+		SET favorite_pokemons = ARRAY_APPEND(favorite_pokemons, '${JSON.stringify(pokemonJson)}')
 		WHERE token = '${token}'`;
 		await this.client.query(sql);
 	}
 
-	// 	async removeFavoriteFromUser(token: string, pokemonId: number): Promise<void> {
-	// 		const pokemon = await this.pokemonsCollection.findOne({
-	// 			id: pokemonId,
-	// 		});
-	// 		await this.usersCollection.updateOne({ _id: new ObjectId(token) }, { $pull: { favoritePokemons: pokemon } });
-	// 	}
+	async removeFavoriteFromUser(token: string, pokemonId: number): Promise<void> {
+		const pokemonJson = await this.getPokemonById(pokemonId);
+		const sql = `UPDATE users
+		SET favorite_pokemons = ARRAY_REMOVE(favorite_pokemons,'${JSON.stringify(pokemonJson)}')
+		WHERE token = '${token}'`;
+		await this.client.query(sql);
+	}
 }
