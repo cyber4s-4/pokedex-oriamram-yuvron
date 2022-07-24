@@ -57,7 +57,7 @@ export class DbManager {
 	}
 
 	async getPokemonById(id: number): Promise<any> {
-		return (await this.client.query(`SELECT * FROM pokemons WHERE id = ${id}`)).rows[0];
+		return (await this.client.query("SELECT * FROM pokemons WHERE id = $1", [id])).rows[0];
 	}
 
 	async createUsersTable(): Promise<void> {
@@ -69,29 +69,29 @@ export class DbManager {
 	}
 
 	async createUser(token: string): Promise<void> {
-		await this.client.query(`INSERT INTO users (token) VALUES ('${token}')`);
+		await this.client.query("INSERT INTO users (token) VALUES ($1)", [token]);
 	}
 
 	async getUserFavoritePokemons(token: string): Promise<any> {
 		const sql = `SELECT favorite_pokemons
 		FROM users
-		WHERE token = '${token}'`;
-		return (await this.client.query(sql)).rows[0]["favorite_pokemons"];
+		WHERE token = $1`;
+		return (await this.client.query(sql, [token])).rows[0]["favorite_pokemons"];
 	}
 
 	async addFavoriteToUser(token: string, pokemonId: number): Promise<void> {
 		const pokemonJson = await this.getPokemonById(pokemonId);
 		const sql = `UPDATE users
 		SET favorite_pokemons = ARRAY_APPEND(favorite_pokemons, '${JSON.stringify(pokemonJson)}')
-		WHERE token = '${token}'`;
-		await this.client.query(sql);
+		WHERE token = $1`;
+		await this.client.query(sql, [token]);
 	}
 
 	async removeFavoriteFromUser(token: string, pokemonId: number): Promise<void> {
 		const pokemonJson = await this.getPokemonById(pokemonId);
 		const sql = `UPDATE users
 		SET favorite_pokemons = ARRAY_REMOVE(favorite_pokemons,'${JSON.stringify(pokemonJson)}')
-		WHERE token = '${token}'`;
-		await this.client.query(sql);
+		WHERE token = $1`;
+		await this.client.query(sql, [token]);
 	}
 }
