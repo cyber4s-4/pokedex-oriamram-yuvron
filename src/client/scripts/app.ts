@@ -43,7 +43,6 @@ async function loadPage(): Promise<void> {
 	ADD_FAVORITE_URL = ADD_FAVORITE_URL.replace("<token>", token);
 	DELETE_FAVORITE_URL = DELETE_FAVORITE_URL.replace("<token>", token);
 	await createPokemons();
-	console.log(pokemons);
 	initializeEventListeners();
 	loader.classList.remove("active");
 	pokemonsCollectiveMethods.render();

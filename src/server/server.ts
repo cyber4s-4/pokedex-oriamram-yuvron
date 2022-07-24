@@ -3,13 +3,13 @@ import { json, text } from "body-parser";
 import path from "path";
 import { DbManager } from "./database";
 import dotenv from "dotenv";
-import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 const db = new DbManager();
+// Connects to the database and starting the server afterwards
 db.connect().then(() => {
 	app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 });
@@ -49,8 +49,13 @@ app.get("/api/pokemons/:token", async (req: Request, res: Response) => {
 		if (sortDirection !== 1 && sortDirection !== -1) sortDirection = 1;
 	}
 	const start = req.query.start ? +req.query.start : 0;
-	const pokemons = await db.getPokemonsByFilter(token, searchTerm, types, combinedTypes, sortType, sortDirection, start);
-	res.json(pokemons);
+	try {
+		const pokemons = await db.getPokemonsByFilter(token, searchTerm, types, combinedTypes, sortType, sortDirection, start);
+		res.json(pokemons);
+	} catch (err) {
+		console.log(err.message);
+		res.status(500).send(err.message);
+	}
 });
 
 // Get request to get a pokemon by id
@@ -62,11 +67,10 @@ app.get("/api/pokemon/:id", async (req: Request, res: Response) => {
 
 // GET request to create a new user and receive a token
 app.get("/api/register", async (req: Request, res: Response) => {
-	const newToken = uuidv4();
-	db.createUser(newToken)
-		.then(() => {
+	db.createUser()
+		.then((token) => {
 			console.log("User Created");
-			res.send(newToken);
+			res.send(token);
 		})
 		.catch((err) => {
 			console.log(err.message);
