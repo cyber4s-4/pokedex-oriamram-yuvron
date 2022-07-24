@@ -12,6 +12,12 @@ The url is already waiting for you (Idan / Dima) in a DM via Slack (From Yuval R
 
 ---
 
+## Heroku
+
+https://pokedex-oriamram-yuvron.herokuapp.com/
+
+---
+
 ## Notes:
 
 - Remember to localStorage.clear()
