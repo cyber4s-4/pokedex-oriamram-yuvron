@@ -153,5 +153,9 @@ body {
 		#prev-page {
 			@include position(absolute, 80.2%, 66.8%);
 		}
+		#home {
+			@include position(absolute, 85.3%, 75.7%);
+			@include size(9.5%, 5.2%);
+		}
 	}
 }
