@@ -25,6 +25,7 @@ const filters: string[] = [];
 let favoritePokemons: PokemonData[] = [];
 let lastSort: ["id" | "name", "ascending" | "descending"] = ["id", "ascending"];
 let currentPokemonsUrl = GET_POKEMONS_URL;
+let noMorePokemons = false;
 
 loadPage();
 
@@ -112,6 +113,7 @@ function buildUrl(start = 0): void {
 	filterPokemons();
 	searchPokemons();
 	if (currentPokemonsUrl[currentPokemonsUrl.length - 1] === "&") currentPokemonsUrl = currentPokemonsUrl.slice(0, -1);
+	noMorePokemons = false;
 }
 
 // Adds the sort type and sort direction to the url that fetches pokemons
@@ -194,11 +196,12 @@ async function fetchText(url: string): Promise<any> {
 
 // Loads more pokemons when scrolling to bottom
 window.onscroll = async function (): Promise<void> {
-	if (!loader.classList.contains("active") && window.innerHeight + window.scrollY + 50 >= document.body.scrollHeight) {
+	if (!noMorePokemons && !loader.classList.contains("active") && window.innerHeight + window.scrollY + 50 >= document.body.scrollHeight) {
 		loader.classList.add("active");
 		window.scroll({ top: document.body.scrollHeight, left: 0, behavior: "smooth" });
 		buildUrl(pokemons.length);
 		const newPokemons = await fetchJson(currentPokemonsUrl);
+		if (newPokemons.length === 0) noMorePokemons = true;
 		loader.classList.remove("active");
 		newPokemons.forEach((pokemon) => {
 			const pokemonObject = new Pokemon(pokemon);

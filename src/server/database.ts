@@ -14,7 +14,15 @@ export class DbManager {
 	}
 
 	// Gets pokemons by given filters, adding the user's favorite pokemons if they match the filters (usable when favorites are not in the first 100 results)
-	async getPokemonsByFilter(token: string, searchTerm: string, types: string[], combinedTypes: boolean, sortType: string, sortDirection: number, start: number): Promise<any[]> {
+	async getPokemonsByFilter(
+		token: string,
+		searchTerm: string,
+		types: string[],
+		combinedTypes: boolean,
+		sortType: string,
+		sortDirection: number,
+		start: number
+	): Promise<any[]> {
 		let sql = "SELECT * FROM pokemons WHERE ";
 		const values = [];
 		if (!isNaN(+searchTerm)) {
@@ -45,7 +53,14 @@ export class DbManager {
 	}
 
 	// Gets the user's favorite pokemons by given filters
-	private async getFavoritePokemonsByFilters(token: string, searchTerm: string, types: string[], combinedTypes: boolean, sortType: string, sortDirection: number): Promise<any[]> {
+	private async getFavoritePokemonsByFilters(
+		token: string,
+		searchTerm: string,
+		types: string[],
+		combinedTypes: boolean,
+		sortType: string,
+		sortDirection: number
+	): Promise<any[]> {
 		const favoritePokemons = await this.getUserFavoritePokemons(token);
 		const filteredFavoritePokemons = favoritePokemons.filter((pokemon) => {
 			const checkSearchTerm = pokemon.name.includes(searchTerm) || pokemon.id === +searchTerm;
