@@ -1,11 +1,18 @@
-import { Client } from "pg";
+import { Pool } from "pg";
 import { v4 as uuidv4 } from "uuid";
 
 export class DbManager {
-	client: Client;
+	client: Pool;
 
 	constructor() {
-		this.client = new Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+		this.client = new Pool({
+			connectionString: process.env.DATABASE_URL,
+			ssl: { rejectUnauthorized: false },
+			idleTimeoutMillis: 72000000,
+			connectionTimeoutMillis: 72000000,
+			keepAlive: true,
+			port: 5432,
+		});
 	}
 
 	// Connects to the database
@@ -32,7 +39,7 @@ export class DbManager {
 			sql += `name LIKE $${values.length + 1} `;
 			values.push(`%${searchTerm}%`);
 		}
-		const stringifiedTypes = `'[${types.map((type) => `"${type}"`).join(",")}]'`;
+		const stringifiedTypes = `[${types.map((type) => `"${type}"`).join(",")}]`;
 		if (types.length > 0) {
 			if (combinedTypes) {
 				sql += `AND specs->'types' @> $${values.length + 1} `;
